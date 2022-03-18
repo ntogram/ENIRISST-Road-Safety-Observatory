@@ -1,12 +1,6 @@
 package com.enirisst.rso_api.repositories;
-import com.enirisst.rso_api.models.E;
-import com.enirisst.rso_api.models.Nut1;
-import com.enirisst.rso_api.models.Nut2;
-import com.enirisst.rso_api.models.Nut32;
-import com.enirisst.rso_api.row_mappers.EMapper;
-import com.enirisst.rso_api.row_mappers.Nut1Mapper;
-import com.enirisst.rso_api.row_mappers.Nut2Mapper;
-import com.enirisst.rso_api.row_mappers.Nut32Mapper;
+import com.enirisst.rso_api.models.*;
+import com.enirisst.rso_api.row_mappers.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,12 +24,16 @@ public class QueriesRepository {
         String sql_query ="SELECT nuts3.eu_code,nuts3.nut,TROX.YEAR_ID,COUNT(*) as accident_number FROM TROX LEFT JOIN nuts3 ON (nuts3.year=TROX.YEAR_ID) AND (LEFT(TROX.GEOCODE_ACC_CL,2)=nuts3.code) GROUP BY nuts3.eu_code,nuts3.nut,TROX.YEAR_ID ORDER BY nuts3.nut,TROX.YEAR_ID";
         return jdbcTemplate.query(sql_query, new Nut1Mapper());
     }
-    //nut2,nut3,nut4
+    //nuts
     public List<Nut2> nut23_query(String sql_query,boolean rounded,int dec){
 
         return jdbcTemplate.query(sql_query, new Nut2Mapper(rounded,dec));
     }
+    //kd
+    public List<Kd> kd_query(String sql_query, boolean rounded, int dec){
 
+        return jdbcTemplate.query(sql_query, new KdMapper(rounded,dec));
+    }
 
     public List<E> E_query(String sql_query){
         return jdbcTemplate.query(sql_query,new EMapper());
