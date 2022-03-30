@@ -625,7 +625,62 @@ public List<Kd> kd6Query() {
     kd_res.forEach(System.out::println);
     return kd_res;
 }
+//Ποσοστό ατυχημάτων κατά τις ώρες αιχμής
+@GetMapping(path = "/kd7")
+public List<Kd> kd7Query() {
+    String sql_query = "SELECT KalMun.Code, KalMun.Muname,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.HOUR_ACC_NR Between 8 And 9 Or TROX.HOUR_ACC_NR Between 17 And 18) THEN 1 ELSE 0 END)/COUNT(*))  AS indicator FROM TROX LEFT JOIN Kalmun  ON (LEFT(TROX.GEOCODE_ACC_CL,4)=KalMun.Code) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+    List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
+    kd_res.forEach(System.out::println);
+    return kd_res;
+}
 
+//Ποσοστό ατυχημάτων κατά τους θερινούς μήνες
+@GetMapping(path = "/kd10")
+public List<Kd> kd10Query() {
+    String sql_query = "SELECT KalMun.Code, KalMun.Muname,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.MONTH_ID Between 6 And 8) THEN 1 ELSE 0 END)/COUNT(*))  AS indicator FROM TROX LEFT JOIN Kalmun  ON (LEFT(TROX.GEOCODE_ACC_CL,4)=KalMun.Code) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+    List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
+    kd_res.forEach(System.out::println);
+    return kd_res;
+}
+//Ποσοστό ατυχημάτων υπό δυσμενείς καιρικές συνθήκες
+@GetMapping(path = "/kd11")
+public List<Kd> kd11Query() {
+    String sql_query = "SELECT KalMun.Code, KalMun.Muname,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.ATMOSF_SINTHIKES_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*))  AS indicator FROM TROX LEFT JOIN Kalmun  ON (LEFT(TROX.GEOCODE_ACC_CL,4)=KalMun.Code) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+    List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
+    kd_res.forEach(System.out::println);
+    return kd_res;
+}
 
-
+//Ποσοστό ατυχημάτων σε σημεία με κακή συντήρηση
+@GetMapping(path = "/kd12")
+public List<Kd> kd12Query() {
+        String sql_query = "SELECT KalMun.Code, KalMun.Muname,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.STATUS_ODOSTR_CL<>'5') THEN 1 ELSE 0 END)/COUNT(*))  AS indicator FROM TROX LEFT JOIN Kalmun  ON (LEFT(TROX.GEOCODE_ACC_CL,4)=KalMun.Code) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+        List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
+        kd_res.forEach(System.out::println);
+        return kd_res;
+    }
+//Ποσοστό ατυχημάτων υπό δυσμενείς καιρικές συνθήκες και κακή συντήρηση
+@GetMapping(path = "/kd13")
+public List<Kd> kd13Query() {
+    String sql_query = "SELECT KalMun.Code, KalMun.Muname,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  ( (TROX.STATUS_ODOSTR_CL<>'5') AND (TROX.ATMOSF_SINTHIKES_CL<>'1')) THEN 1 ELSE 0 END)/COUNT(*))  AS indicator FROM TROX LEFT JOIN Kalmun  ON (LEFT(TROX.GEOCODE_ACC_CL,4)=KalMun.Code) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+    List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
+    kd_res.forEach(System.out::println);
+    return kd_res;
+}
+//Ποσοστό ατυχημάτων σε σημεία με κακές συνθήκες φωτισμού
+@GetMapping(path = "/kd14")
+public List<Kd> kd14Query() {
+    String sql_query = "SELECT KalMun.Code, KalMun.Muname,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.LIGHT_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*))  AS indicator FROM TROX LEFT JOIN Kalmun  ON (LEFT(TROX.GEOCODE_ACC_CL,4)=KalMun.Code) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+    List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
+    kd_res.forEach(System.out::println);
+    return kd_res;
+}
+//Ποσοστό ατυχημάτων που συνέβησαν Σαββατοκύριακα
+@GetMapping(path = "/kd28")
+public List<Kd> kd28Query() {
+    String sql_query = "SELECT KalMun.Code, KalMun.Muname,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.DATE_WEEK_ACC_NR=1 Or TROX.DATE_WEEK_ACC_NR=7) THEN 1 ELSE 0 END)/COUNT(*))  AS indicator FROM TROX LEFT JOIN Kalmun  ON (LEFT(TROX.GEOCODE_ACC_CL,4)=KalMun.Code) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+    List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
+    kd_res.forEach(System.out::println);
+    return kd_res;
+}
 }
