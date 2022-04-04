@@ -683,4 +683,92 @@ public List<Kd> kd28Query() {
     kd_res.forEach(System.out::println);
     return kd_res;
 }
+//Γεωγραφικό Επίπεδο Οικισμών
+//Κατηγορία Πλήθος Ατυχημάτων
+// Αριθμός Ατυχημάτων
+@GetMapping(path = "/o1")
+public List<O> o1Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos, TROX.YEAR_ID, Count(*) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Αριθμός νεκρών από ατυχήματα ανά 1,000,000 κατοίκους
+//-1 when population=0 (μηδενικός πληθυσμός)
+@GetMapping(path = "/o2")
+public List<O> o2Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos, TROX.YEAR_ID,((CASE WHEN POPULATION.[Μόνιμος Πληθυσμός]=0 THEN -1 ELSE Count(*)*1000000.000/POPULATION.[Μόνιμος Πληθυσμός] END)) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Αριθμός νεκρών από ατυχήματα ανά 1,000,000 κατοίκους
+@GetMapping(path = "/o3")
+public List<O> o3Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(CASE WHEN POPULATION.[Μόνιμος Πληθυσμός]=0 THEN -1 ELSE SUM(TROX.PATH_DEAD_NR)*1000000.000/POPULATION.[Μόνιμος Πληθυσμός] END) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Αριθμός σοβαρά τραυματιών από ατυχήματα ανά 1,000,000 κατοίκους
+@GetMapping(path = "/o4")
+public List<O> o4Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(CASE WHEN POPULATION.[Μόνιμος Πληθυσμός]=0 THEN -1 ELSE SUM(TROX.PATH_BAR_TRAYM_NR)*1000000.000/POPULATION.[Μόνιμος Πληθυσμός] END) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Δείκτης 5
+@GetMapping(path = "/o5")
+public List<O> o5Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos, TROX.YEAR_ID,Count(EV.AA_ATICHIMATOS_ID)*100.00/Count(*) AS indicator FROM (TROX LEFT JOIN POPULATION ON POPULATION.Code=TROX.GEOCODE_ACC_CL) LEFT JOIN (SELECT TROX.YEAR_ID, TROX.MONTH_ID, TROX.AA_ATICHIMATOS_ID FROM (TROX LEFT JOIN PATHON  ON (PATHON.YEAR_ID = TROX.YEAR_ID) AND (PATHON.MONTH_ID = TROX.MONTH_ID) AND (PATHON.AA_ATICHIMATOS_ID = TROX.AA_ATICHIMATOS_ID)) LEFT JOIN ochim  ON (ochim.YEAR_ID = TROX.YEAR_ID) AND (ochim.MONTH_ID = TROX.MONTH_ID) AND (ochim.AA_ATICHIMATOS_ID = TROX.AA_ATICHIMATOS_ID) WHERE (PATHON.KATIG_PATHON_CL = '3' OR ochim.TYPE_OXHMATOS_CL = '21') GROUP BY TROX.YEAR_ID, TROX.MONTH_ID, TROX.AA_ATICHIMATOS_ID)  AS EV ON (TROX.AA_ATICHIMATOS_ID = EV.AA_ATICHIMATOS_ID) AND (TROX.MONTH_ID = EV.MONTH_ID) AND (TROX.YEAR_ID = EV.YEAR_ID) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID;" ;
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό θανατηφόρων ατυχημάτων
+@GetMapping(path = "/o13")
+public List<O> o13Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.PATH_DEAD_NR>0 THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό ατυχημάτων με σοβαρά τραυματίες
+@GetMapping(path = "/o14")
+public List<O> o14Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.PATH_BAR_TRAYM_NR>0 THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+
+//Ποσοστό ατυχημάτων με σοβαρά τραυματίες
+@GetMapping(path = "/o15")
+public List<O> o15Query() {
+        String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.PATH_ELAF_TRAYM_NR>0 THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+        List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+        o_res.forEach(System.out::println);
+        return o_res;
+    }
+//Ποσοστό ατυχημάτων με παράσυρση πεζού
+@GetMapping(path = "/o24")
+public List<O> o24Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.TIPOS_ATICHIM_CL='11' THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+
+//Αριθμός ατυχημάτων με παράσυρση πεζού
+@GetMapping(path = "/o25")
+public List<O> o25Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,((SUM(CASE WHEN TROX.TIPOS_ATICHIM_CL='11' THEN 1 ELSE 0 END)))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Γεωγραφικό Επίπεδο Οικισμών
+//Κατηγορία Παθόντες
+
 }

@@ -39,6 +39,9 @@ public class QueriesRepository {
         return jdbcTemplate.query(sql_query,new EMapper());
     }
 
+    public List<O> O_query(String sql_query, boolean rounded, int dec){
+        return jdbcTemplate.query(sql_query,new OMapper(rounded, dec));
+    }
     //nut32
     public List<Nut32> nut32_query(){
         String sql_query ="SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID, Count(*) as count,nuts3.unemployment,'Δεν υπάρχουν δεδομένα' AS indicator FROM TROX  LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID, nuts3.unemployment ORDER BY nuts3.nut, TROX.YEAR_ID;";
