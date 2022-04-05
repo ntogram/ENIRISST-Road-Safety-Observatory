@@ -23,15 +23,23 @@ public class TestController {
         return areas;
     }
 
-    @GetMapping(path="/kli/{cities}")
+    @GetMapping(path={"/kli","/kli/{cities}"})
     @ResponseBody
-    public Map <String, String> sayHi(@PathVariable List<String> cities){
+    public Map <String, String> sayHi(@PathVariable(required = false) List<String> cities){
         HashMap<String, String> capitalCities = new HashMap<String, String>();
-        //System.out.println(cities.get(0));
-        capitalCities.put("England",cities.get(0));
-        capitalCities.put("Germany", cities.get(1));
-        capitalCities.put("Norway", cities.get(2));
-        capitalCities.put("USA", cities.get(3));
+        if (cities!=null) {
+            //System.out.println(cities.get(0));
+            capitalCities.put("England", cities.get(0));
+            capitalCities.put("Germany", cities.get(1));
+            capitalCities.put("Norway", cities.get(2));
+            capitalCities.put("USA", cities.get(3));
+        }
+        else{
+            capitalCities.put("England", "London");
+            capitalCities.put("Germany", "Berlin");
+            capitalCities.put("Norway", "Oslo");
+            capitalCities.put("USA", "Oslo");
+        }
         return capitalCities;
     }
 

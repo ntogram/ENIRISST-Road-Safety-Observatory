@@ -12,13 +12,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+// use -1 value for null values indicator
 @RestController
 @RequestMapping("/api")
 public class QueryController {
     @Autowired
     private QueriesRepository queryRepo;
 
+    private String filter(){
+        String where_clause="";
+        return where_clause;
+    }
     //Γεωγραφικό Επίπεδο NUTS3
 
     //Κατηγορία Πλήθος Ατυχημάτων
@@ -225,7 +229,7 @@ public class QueryController {
 //Ποσοστό παθόντων στην ηλικιακή ομάδα <29 ετών
     @GetMapping(path = "/nut18")
     public List<Nut2> nut18Query() {
-        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
+        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
         List<Nut2> nut2_res = queryRepo.nut23_query(sql_query, true, 0);
         nut2_res.forEach(System.out::println);
         return nut2_res;
@@ -234,7 +238,7 @@ public class QueryController {
     //Ποσοστό παθόντων στην ηλικιακή ομάδα >65 ετών
     @GetMapping(path = "/nut19")
     public List<Nut2> nut19Query() {
-        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
+        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
         List<Nut2> nut2_res = queryRepo.nut23_query(sql_query, true, 0);
         nut2_res.forEach(System.out::println);
         return nut2_res;
@@ -262,7 +266,7 @@ public class QueryController {
     //Ποσοστό ανδρών παθόντων
     @GetMapping(path = "/nut22")
     public List<Nut2> nut22Query() {
-        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='1') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
+        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='1') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
         List<Nut2> nut2_res = queryRepo.nut23_query(sql_query, true, 0);
         nut2_res.forEach(System.out::println);
         return nut2_res;
@@ -271,7 +275,7 @@ public class QueryController {
     //Ποσοστό γυναικών παθόντων
     @GetMapping(path = "/nut23")
     public List<Nut2> nut23Query() {
-        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='2') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
+        String sql_query = "SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='2') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID) GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID ORDER BY nuts3.nut, TROX.YEAR_ID;";
         List<Nut2> nut2_res = queryRepo.nut23_query(sql_query, true, 0);
         nut2_res.forEach(System.out::println);
         return nut2_res;
@@ -552,7 +556,7 @@ public List<Kd> kd27Query() {
 //Ποσοστό παθόντων στην ηλικιακή ομάδα <29 ετών
 @GetMapping(path = "/kd18")
 public List<Kd> kd18Query() {
-    String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+    String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
     List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
     kd_res.forEach(System.out::println);
     return kd_res;
@@ -561,7 +565,7 @@ public List<Kd> kd18Query() {
 //Ποσοστό παθόντων στην ηλικιακή ομάδα >65 ετών
 @GetMapping(path = "/kd19")
 public List<Kd> kd19Query() {
-        String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+        String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
         List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
         kd_res.forEach(System.out::println);
         return kd_res;
@@ -586,7 +590,7 @@ public List<Kd> kd21Query() {
 //Ποσοστό ανδρών παθόντων
  @GetMapping(path = "/kd22")
  public List<Kd> kd22Query() {
-        String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  (PATHON.FILO_PATHON_CL='1' AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+        String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  (PATHON.FILO_PATHON_CL='1' AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
         List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
         kd_res.forEach(System.out::println);
         return kd_res;
@@ -595,12 +599,12 @@ public List<Kd> kd21Query() {
 //Ποσοστό γυναικών παθόντων
 @GetMapping(path = "/kd23")
     public List<Kd> kd23Query() {
-        String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE (100.00*(SUM(CASE WHEN  (PATHON.FILO_PATHON_CL='2' AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
+        String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  (PATHON.FILO_PATHON_CL='2' AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/SUM(CASE WHEN (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
         List<Kd> kd_res = queryRepo.kd_query(sql_query, true, 0);
         kd_res.forEach(System.out::println);
         return kd_res;
     }
-
+//Αριθμός ανδρών παθόντων
 @GetMapping(path = "/kd24")
 public List<Kd> kd24Query() {
         String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='1') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
@@ -608,6 +612,7 @@ public List<Kd> kd24Query() {
         kd_res.forEach(System.out::println);
         return kd_res;
     }
+//Αριθμός γυναικών παθόντων
 @GetMapping(path = "/kd25")
 public List<Kd> kd25Query() {
         String sql_query = "SELECT KalMun.Code, KalMun.Muname, TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='2') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN Kalmun  ON (Kalmun.code=Left(TROX.GEOCODE_ACC_CL,4)) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY KalMun.Code, KalMun.Muname, TROX.YEAR_ID ORDER BY KalMun.Muname, TROX.YEAR_ID;";
@@ -770,5 +775,146 @@ public List<O> o25Query() {
 }
 //Γεωγραφικό Επίπεδο Οικισμών
 //Κατηγορία Παθόντες
+// Ποσοστό παθόντων στην ηλικιακή ομάδα <29 ετών
+@GetMapping(path = "/o16")
+public List<O> o16Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό παθόντων στην ηλικιακή ομάδα >65 ετών
+@GetMapping(path = "/o17")
+public List<O> o17Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+
+
+
+
+//Αριθμός παθόντων στην ηλικιακή ομάδα <29 ετών
+@GetMapping(path = "/o18")
+public List<O> o18Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Αριθμός παθόντων στην ηλικιακή ομάδα >65 ετών
+//need check
+@GetMapping(path = "/o19")
+public List<O> o19Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+
+
+//Ποσοστό ανδρών παθόντων
+@GetMapping(path = "/o20")
+public List<O> o20Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='1') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+
+//Ποσοστό γυναικών παθόντων
+    //change
+@GetMapping(path = "/o21")
+public List<O> o21Query() {
+        String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='2') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+        List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+        o_res.forEach(System.out::println);
+        return o_res;
+    }
+
+//Αριθμός ανδρών παθόντων
+@GetMapping(path = "/o22")
+public List<O> o22Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='1') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+@GetMapping(path = "/o23")
+public List<O> o23Query() {
+        String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='2') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+        List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+        o_res.forEach(System.out::println);
+        return o_res;
+    }
+
+//Γεωγραφικό Επίπεδο Οικισμών
+//Κατηγορία Συνθήκες
+//Ποσοστό ατυχημάτων μεταξύ 22 και 06
+@GetMapping(path = "/o6")
+public List<O> o6Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.HOUR_ACC_NR<=6 Or TROX.HOUR_ACC_NR>=22) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό ατυχημάτων κατά τις ώρες αιχμής
+@GetMapping(path = "/o7")
+public List<O> o7Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.HOUR_ACC_NR Between 8 And 9 Or TROX.HOUR_ACC_NR Between 17 And 18) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό ατυχημάτων κατά τους θερινούς μήνες
+@GetMapping(path = "/o8")
+public List<O> o8Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.MONTH_ID Between 6 And 8) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό ατυχημάτων υπό δυσμενείς καιρικές συνθήκες
+@GetMapping(path = "/o9")
+public List<O> o9Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.ATMOSF_SINTHIKES_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+
+//Ποσοστό ατυχημάτων σε σημεία με κακή συντήρηση
+@GetMapping(path = "/o10")
+public List<O> o10Query() {
+        String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.STATUS_ODOSTR_CL<>'5') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+        List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+        o_res.forEach(System.out::println);
+        return o_res;
+    }
+//Ποσοστό ατυχημάτων υπό δυσμενείς καιρικές συνθήκες και συντήρηση
+@GetMapping(path = "/o11")
+public List<O> o11Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.STATUS_ODOSTR_CL<>'5' And TROX.ATMOSF_SINTHIKES_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό ατυχημάτων σε σημεία με κακές συνθήκες φωτισμού
+@GetMapping(path = "/o12")
+public List<O> o12Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.LIGHT_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
+//Ποσοστό ατυχημάτων που συνέβησαν Σαββατοκύριακα
+@GetMapping(path = "/o26")
+public List<O> o26Query() {
+    String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.DATE_WEEK_ACC_NR=1 Or TROX.DATE_WEEK_ACC_NR=7) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
+    List<O> o_res = queryRepo.O_query(sql_query, true, 0);
+    o_res.forEach(System.out::println);
+    return o_res;
+}
 
 }
