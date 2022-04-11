@@ -793,7 +793,7 @@ public List<Kd> kd28Query(@PathVariable(name="region",required = false) String r
 // Αριθμός Ατυχημάτων
 @GetMapping(path={"/o1","/o1/{region}","/o1/{region}/{start_year}","/o1/{region}/{start_year}/{end_year}"})
 public List<O> o1Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos, TROX.YEAR_ID, Count(*) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -803,7 +803,7 @@ public List<O> o1Query(@PathVariable(name="region",required = false) String regi
 //-1 when population=0 (μηδενικός πληθυσμός)
 @GetMapping(path={"/o2","/o2/{region}","/o2/{region}/{start_year}","/o2/{region}/{start_year}/{end_year}"})
 public List<O> o2Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos, TROX.YEAR_ID,((CASE WHEN POPULATION.[Μόνιμος Πληθυσμός]=0 THEN -1 ELSE Count(*)*1000000.000/POPULATION.[Μόνιμος Πληθυσμός] END)) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -812,7 +812,7 @@ public List<O> o2Query(@PathVariable(name="region",required = false) String regi
 //Αριθμός νεκρών από ατυχήματα ανά 1,000,000 κατοίκους
 @GetMapping(path={"/o3","/o3/{region}","/o3/{region}/{start_year}","/o3/{region}/{start_year}/{end_year}"})
 public List<O> o3Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(CASE WHEN POPULATION.[Μόνιμος Πληθυσμός]=0 THEN -1 ELSE SUM(TROX.PATH_DEAD_NR)*1000000.000/POPULATION.[Μόνιμος Πληθυσμός] END) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -821,7 +821,7 @@ public List<O> o3Query(@PathVariable(name="region",required = false) String regi
 //Αριθμός σοβαρά τραυματιών από ατυχήματα ανά 1,000,000 κατοίκους
 @GetMapping(path={"/o4","/o4/{region}","/o4/{region}/{start_year}","/o4/{region}/{start_year}/{end_year}"})
 public List<O> o4Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(CASE WHEN POPULATION.[Μόνιμος Πληθυσμός]=0 THEN -1 ELSE SUM(TROX.PATH_BAR_TRAYM_NR)*1000000.000/POPULATION.[Μόνιμος Πληθυσμός] END) AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -830,7 +830,7 @@ public List<O> o4Query(@PathVariable(name="region",required = false) String regi
 //Δείκτης 5
 @GetMapping(path={"/o5","/o5/{region}","/o5/{region}/{start_year}","/o5/{region}/{start_year}/{end_year}"})
 public List<O> o5Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos, TROX.YEAR_ID,Count(EV.AA_ATICHIMATOS_ID)*100.00/Count(*) AS indicator FROM (TROX LEFT JOIN POPULATION ON POPULATION.Code=TROX.GEOCODE_ACC_CL) LEFT JOIN (SELECT TROX.YEAR_ID, TROX.MONTH_ID, TROX.AA_ATICHIMATOS_ID FROM (TROX LEFT JOIN PATHON  ON (PATHON.YEAR_ID = TROX.YEAR_ID) AND (PATHON.MONTH_ID = TROX.MONTH_ID) AND (PATHON.AA_ATICHIMATOS_ID = TROX.AA_ATICHIMATOS_ID)) LEFT JOIN ochim  ON (ochim.YEAR_ID = TROX.YEAR_ID) AND (ochim.MONTH_ID = TROX.MONTH_ID) AND (ochim.AA_ATICHIMATOS_ID = TROX.AA_ATICHIMATOS_ID) WHERE (PATHON.KATIG_PATHON_CL = '3' OR ochim.TYPE_OXHMATOS_CL = '21') GROUP BY TROX.YEAR_ID, TROX.MONTH_ID, TROX.AA_ATICHIMATOS_ID)  AS EV ON (TROX.AA_ATICHIMATOS_ID = EV.AA_ATICHIMATOS_ID) AND (TROX.MONTH_ID = EV.MONTH_ID) AND (TROX.YEAR_ID = EV.YEAR_ID) "+where_clause+"GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID;" ;
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -839,7 +839,7 @@ public List<O> o5Query(@PathVariable(name="region",required = false) String regi
 //Ποσοστό θανατηφόρων ατυχημάτων
 @GetMapping(path={"/o13","/o13/{region}","/o13/{region}/{start_year}","/o13/{region}/{start_year}/{end_year}"})
 public List<O> o13Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.PATH_DEAD_NR>0 THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -848,7 +848,7 @@ public List<O> o13Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ατυχημάτων με σοβαρά τραυματίες
 @GetMapping(path={"/o14","/o14/{region}","/o14/{region}/{start_year}","/o14/{region}/{start_year}/{end_year}"})
 public List<O> o14Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.PATH_BAR_TRAYM_NR>0 THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -858,7 +858,7 @@ public List<O> o14Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ατυχημάτων με σοβαρά τραυματίες
 @GetMapping(path={"/o15","/o15/{region}","/o15/{region}/{start_year}","/o15/{region}/{start_year}/{end_year}"})
 public List<O> o15Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-        String where_clause=filter("oikismos",start_year,end_year,region);
+        String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
         String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.PATH_ELAF_TRAYM_NR>0 THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
         List<O> o_res = queryRepo.O_query(sql_query, true, 0);
         o_res.forEach(System.out::println);
@@ -867,7 +867,7 @@ public List<O> o15Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ατυχημάτων με παράσυρση πεζού
 @GetMapping(path={"/o24","/o24/{region}","/o24/{region}/{start_year}","/o24/{region}/{start_year}/{end_year}"})
 public List<O> o24Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*(SUM(CASE WHEN TROX.TIPOS_ATICHIM_CL='11' THEN 1 ELSE 0 END))/COUNT(*))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -877,7 +877,7 @@ public List<O> o24Query(@PathVariable(name="region",required = false) String reg
 //Αριθμός ατυχημάτων με παράσυρση πεζού
 @GetMapping(path={"/o25","/o25/{region}","/o25/{region}/{start_year}","/o25/{region}/{start_year}/{end_year}"})
 public List<O> o25Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,((SUM(CASE WHEN TROX.TIPOS_ATICHIM_CL='11' THEN 1 ELSE 0 END)))  AS indicator FROM TROX LEFT JOIN POPULATION ON TROX.GEOCODE_ACC_CL=POPULATION.Code "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -888,7 +888,7 @@ public List<O> o25Query(@PathVariable(name="region",required = false) String reg
 // Ποσοστό παθόντων στην ηλικιακή ομάδα <29 ετών
 @GetMapping(path={"/o16","/o16/{region}","/o16/{region}/{start_year}","/o16/{region}/{start_year}/{end_year}"})
 public List<O> o16Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+"GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -897,7 +897,7 @@ public List<O> o16Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό παθόντων στην ηλικιακή ομάδα >65 ετών
 @GetMapping(path={"/o17","/o17/{region}","/o17/{region}/{start_year}","/o17/{region}/{start_year}/{end_year}"})
 public List<O> o17Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+"GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -910,7 +910,7 @@ public List<O> o17Query(@PathVariable(name="region",required = false) String reg
 //Αριθμός παθόντων στην ηλικιακή ομάδα <29 ετών
 @GetMapping(path={"/o18","/o18/{region}","/o18/{region}/{start_year}","/o18/{region}/{start_year}/{end_year}"})
 public List<O> o18Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR<29) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+"GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -920,7 +920,7 @@ public List<O> o18Query(@PathVariable(name="region",required = false) String reg
 //need check
 @GetMapping(path={"/o19","/o19/{region}","/o19/{region}/{start_year}","/o19/{region}/{start_year}/{end_year}"})
 public List<O> o19Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.ILIKIA_PATHON_NR>65) AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -931,18 +931,23 @@ public List<O> o19Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ανδρών παθόντων
 @GetMapping(path={"/o20","/o20/{region}","/o20/{region}/{start_year}","/o20/{region}/{start_year}/{end_year}"})
 public List<O> o20Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='1') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
     return o_res;
 }
 
+//http://localhost:8080/api/o21/
+    // http://localhost:8080/api/o21/Κομοτηνή,η/2012/2017
+    //http://localhost:8080/api/o21/Κομοτηνή,η/2019
+
+
 //Ποσοστό γυναικών παθόντων
     //change
 @GetMapping(path={"/o21","/o21/{region}","/o21/{region}/{start_year}","/o21/{region}/{start_year}/{end_year}"})
 public List<O> o21Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-        String where_clause=filter("oikismos",start_year,end_year,region);
+        String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
         String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN -1 ELSE (100.00*(SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='2') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))/(SUM(CASE WHEN  ((PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
         List<O> o_res = queryRepo.O_query(sql_query, true, 0);
         o_res.forEach(System.out::println);
@@ -952,7 +957,7 @@ public List<O> o21Query(@PathVariable(name="region",required = false) String reg
 //Αριθμός ανδρών παθόντων
 @GetMapping(path={"/o22","/o22/{region}","/o22/{region}/{start_year}","/o22/{region}/{start_year}/{end_year}"})
 public List<O> o22Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='1') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -960,7 +965,7 @@ public List<O> o22Query(@PathVariable(name="region",required = false) String reg
 }
 @GetMapping(path={"/o23","/o23/{region}","/o23/{region}/{start_year}","/o23/{region}/{start_year}/{end_year}"})
 public List<O> o23Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-        String where_clause=filter("oikismos",start_year,end_year,region);
+        String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
         String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,CASE WHEN SUM(CASE WHEN  (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2') THEN 1 ELSE 0 END)=0 THEN NULL ELSE ((SUM(CASE WHEN  ((PATHON.FILO_PATHON_CL='2') AND (PATHON.SOVAROT_ATICH_CL='1' Or PATHON.SOVAROT_ATICH_CL='2')) THEN 1 ELSE 0 END))) END  AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code) LEFT JOIN PATHON ON (TROX.YEAR_ID = PATHON.YEAR_ID) AND (TROX.MONTH_ID = PATHON.MONTH_ID) AND (TROX.AA_ATICHIMATOS_ID = PATHON.AA_ATICHIMATOS_ID)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
         List<O> o_res = queryRepo.O_query(sql_query, true, 0);
         o_res.forEach(System.out::println);
@@ -972,7 +977,7 @@ public List<O> o23Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ατυχημάτων μεταξύ 22 και 06
 @GetMapping(path={"/o6","/o6/{region}","/o6/{region}/{start_year}","/o6/{region}/{start_year}/{end_year}"})
 public List<O> o6Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.HOUR_ACC_NR<=6 Or TROX.HOUR_ACC_NR>=22) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -981,7 +986,7 @@ public List<O> o6Query(@PathVariable(name="region",required = false) String regi
 //Ποσοστό ατυχημάτων κατά τις ώρες αιχμής
 @GetMapping(path={"/o7","/o7/{region}","/o7/{region}/{start_year}","/o7/{region}/{start_year}/{end_year}"})
 public List<O> o7Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.HOUR_ACC_NR Between 8 And 9 Or TROX.HOUR_ACC_NR Between 17 And 18) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -990,7 +995,7 @@ public List<O> o7Query(@PathVariable(name="region",required = false) String regi
 //Ποσοστό ατυχημάτων κατά τους θερινούς μήνες
 @GetMapping(path={"/o8","/o8/{region}","/o8/{region}/{start_year}","/o8/{region}/{start_year}/{end_year}"})
 public List<O> o8Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.MONTH_ID Between 6 And 8) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -999,7 +1004,7 @@ public List<O> o8Query(@PathVariable(name="region",required = false) String regi
 //Ποσοστό ατυχημάτων υπό δυσμενείς καιρικές συνθήκες
 @GetMapping(path={"/o9","/o9/{region}","/o9/{region}/{start_year}","/o9/{region}/{start_year}/{end_year}"})
 public List<O> o9Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.ATMOSF_SINTHIKES_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -1009,7 +1014,7 @@ public List<O> o9Query(@PathVariable(name="region",required = false) String regi
 //Ποσοστό ατυχημάτων σε σημεία με κακή συντήρηση
 @GetMapping(path={"/o10","/o10/{region}","/o10/{region}/{start_year}","/o10/{region}/{start_year}/{end_year}"})
 public List<O> o10Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-        String where_clause=filter("oikismos",start_year,end_year,region);
+        String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
         String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.STATUS_ODOSTR_CL<>'5') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+"  GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
         List<O> o_res = queryRepo.O_query(sql_query, true, 0);
         o_res.forEach(System.out::println);
@@ -1018,7 +1023,7 @@ public List<O> o10Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ατυχημάτων υπό δυσμενείς καιρικές συνθήκες και συντήρηση
 @GetMapping(path={"/o11","/o11/{region}","/o11/{region}/{start_year}","/o11/{region}/{start_year}/{end_year}"})
 public List<O> o11Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.STATUS_ODOSTR_CL<>'5' And TROX.ATMOSF_SINTHIKES_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -1027,7 +1032,7 @@ public List<O> o11Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ατυχημάτων σε σημεία με κακές συνθήκες φωτισμού
 @GetMapping(path={"/o12","/o12/{region}","/o12/{region}/{start_year}","/o12/{region}/{start_year}/{end_year}"})
 public List<O> o12Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.LIGHT_CL<>'1') THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
@@ -1036,7 +1041,7 @@ public List<O> o12Query(@PathVariable(name="region",required = false) String reg
 //Ποσοστό ατυχημάτων που συνέβησαν Σαββατοκύριακα
 @GetMapping(path={"/o26","/o26/{region}","/o26/{region}/{start_year}","/o26/{region}/{start_year}/{end_year}"})
 public List<O> o26Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
-    String where_clause=filter("oikismos",start_year,end_year,region);
+    String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);
     String sql_query = "SELECT TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή] AS oikismos,TROX.YEAR_ID,(100.00*SUM(CASE WHEN  (TROX.DATE_WEEK_ACC_NR=1 Or TROX.DATE_WEEK_ACC_NR=7) THEN 1 ELSE 0 END)/COUNT(*)) AS indicator FROM (TROX LEFT JOIN POPULATION   ON (TROX.GEOCODE_ACC_CL=POPULATION.Code)) "+where_clause+" GROUP BY TROX.GEOCODE_ACC_CL, POPULATION.[Περιγραφή], TROX.YEAR_ID, POPULATION.[Μόνιμος Πληθυσμός] ORDER BY TROX.GEOCODE_ACC_CL, TROX.YEAR_ID";
     List<O> o_res = queryRepo.O_query(sql_query, true, 0);
     o_res.forEach(System.out::println);
