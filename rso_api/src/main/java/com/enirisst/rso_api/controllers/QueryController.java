@@ -1,11 +1,9 @@
 package com.enirisst.rso_api.controllers;
+import com.enirisst.rso_api.helper.Helper;
 import com.enirisst.rso_api.models.*;
 import com.enirisst.rso_api.repositories.QueriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -15,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 // use -1 value for null values indicator
 @RestController
+@CrossOrigin
 @RequestMapping("/api")
 public class QueryController {
     @Autowired
@@ -24,6 +23,7 @@ public class QueryController {
 
 
         String where_clause="";
+
         if (start_year!=null && end_year!=null){
             where_clause="(TROX.YEAR_ID>="+String.valueOf(start_year)+" AND "+"TROX.YEAR_ID<="+String.valueOf(end_year)+")";
         }
@@ -53,7 +53,21 @@ public class QueryController {
 
         return where_clause;
     }
+    @GetMapping(path={"/qty/{code}/{year}"})
+    public Map<String, double[]> qtyQuery(@PathVariable(name="code") String code, @PathVariable(name="year") Integer year) {
+        Helper h=new Helper();
+       double [] dresult= h.execute(code,year);
+
+
+        Thresholds ts=new Thresholds();
+        double[] d = h.execute(code,year);
+        ts.setThreshs(d);
+        return ts.getresult();
+    }
     //Γεωγραφικό Επίπεδο NUTS3
+
+
+
 
     //Κατηγορία Πλήθος Ατυχημάτων
     //Αριθμός Ατυχημάτων
@@ -855,7 +869,7 @@ public List<O> o14Query(@PathVariable(name="region",required = false) String reg
     return o_res;
 }
 
-//Ποσοστό ατυχημάτων με σοβαρά τραυματίες
+//Ποσοστό ατυχημάτων με ελαφρά τραυματίες
 @GetMapping(path={"/o15","/o15/{region}","/o15/{region}/{start_year}","/o15/{region}/{start_year}/{end_year}"})
 public List<O> o15Query(@PathVariable(name="region",required = false) String region, @PathVariable(name="start_year",required = false) Integer start_year, @PathVariable(name="end_year",required = false) Integer end_year) {
         String where_clause=filter("POPULATION.[Περιγραφή]",start_year,end_year,region);

@@ -1,5 +1,7 @@
 package com.enirisst.rso_api.models;
 
+import java.util.LinkedHashMap;
+
 public class Kd {
     private String Code;
     private String Muname;
@@ -12,6 +14,16 @@ public class Kd {
         this.YEAR_ID = YEAR_ID;
         this.indicator = indicator;
     }
+    public Kd(LinkedHashMap<String, Object> item){
+        this.Code = (String) item.get("code");
+        this.Muname = (String) item.get("muname");;
+        this.YEAR_ID = (int) item.get("year_ID");
+        this.indicator = (double) item.get("indicator");
+    }
+
+
+
+
 
     public String getCode() {
         return Code;

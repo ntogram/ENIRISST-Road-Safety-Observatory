@@ -1,5 +1,7 @@
 package com.enirisst.rso_api.models;
 
+import java.util.LinkedHashMap;
+
 public class O {
     private  String GEOCODE_ACC_CL;
     private String oikismos;
@@ -12,6 +14,15 @@ public class O {
         this.YEAR_ID = YEAR_ID;
         this.indicator = indicator;
     }
+    public O(LinkedHashMap<String, Object> item){
+        this.GEOCODE_ACC_CL = (String) item.get("geocode_ACC_CL");
+        this.oikismos = (String) item.get("oikismos");;
+        this.YEAR_ID = (int) item.get("year_ID");
+        this.indicator = (double) item.get("indicator");
+    }
+
+
+
 
     public String getGEOCODE_ACC_CL() {
         return GEOCODE_ACC_CL;

@@ -21,7 +21,7 @@ public class QueriesRepository {
 
 
     public List<Nut1> nut1_query(String where_clause){
-        String sql_query ="SELECT nuts3.eu_code,nuts3.nut,TROX.YEAR_ID,COUNT(*) as accident_number FROM TROX LEFT JOIN nuts3 ON (nuts3.year=TROX.YEAR_ID) AND (LEFT(TROX.GEOCODE_ACC_CL,2)=nuts3.code) "+where_clause+" GROUP BY nuts3.eu_code,nuts3.nut,TROX.YEAR_ID ORDER BY nuts3.nut,TROX.YEAR_ID";
+        String sql_query ="SELECT nuts3.eu_code,nuts3.nut,TROX.YEAR_ID,COUNT(*) as indicator FROM TROX LEFT JOIN nuts3 ON (nuts3.year=TROX.YEAR_ID) AND (LEFT(TROX.GEOCODE_ACC_CL,2)=nuts3.code) "+where_clause+" GROUP BY nuts3.eu_code,nuts3.nut,TROX.YEAR_ID ORDER BY nuts3.nut,TROX.YEAR_ID";
         return jdbcTemplate.query(sql_query, new Nut1Mapper());
     }
     //nuts
@@ -44,7 +44,7 @@ public class QueriesRepository {
     }
     //nut32
     public List<Nut32> nut32_query(String where_clause){
-        String sql_query ="SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID, Count(*) as count,nuts3.unemployment,'Δεν υπάρχουν δεδομένα' AS indicator FROM TROX  LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID) "+where_clause+" GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID, nuts3.unemployment ORDER BY nuts3.nut, TROX.YEAR_ID;";
+        String sql_query ="SELECT nuts3.eu_code, nuts3.nut, TROX.YEAR_ID as Y, Count(*) as count,nuts3.unemployment,'Δεν υπάρχουν δεδομένα' AS indicator FROM TROX  LEFT JOIN nuts3 ON (nuts3.code=Left(TROX.GEOCODE_ACC_CL,2)) AND (nuts3.year = TROX.YEAR_ID) "+where_clause+" GROUP BY nuts3.eu_code, nuts3.nut, TROX.YEAR_ID, nuts3.unemployment ORDER BY nuts3.nut, TROX.YEAR_ID;";
         return jdbcTemplate.query(sql_query,new Nut32Mapper());
     }
   /*  public List<Nut2> nut2_query(){

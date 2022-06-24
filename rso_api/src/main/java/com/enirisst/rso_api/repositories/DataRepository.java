@@ -1,5 +1,6 @@
 package com.enirisst.rso_api.repositories;
 import com.enirisst.rso_api.models.AREA;
+import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -7,8 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
-
+import org.json.JSONObject;
 @Repository
 public class DataRepository {
 
@@ -39,6 +41,25 @@ public class DataRepository {
             default:
                 return null;
         }
+    }
+
+    public JSONArray transformloclist(List<String> locs,String label){
+        JSONArray jsonlocs=new JSONArray();
+        JSONObject obj=new JSONObject();
+        String[] names = {"label", "value", "group"};
+        for (String loc : locs){
+            obj=new JSONObject();
+            for (int j=0;j<names.length;j++){
+                if(j<2){
+                    obj.put(names[j],loc);
+                }
+                else{
+                    obj.put(names[j],label);
+                }
+            }
+            jsonlocs.put(obj);
+        }
+            return jsonlocs;
     }
 
 

@@ -1,6 +1,8 @@
 package com.enirisst.rso_api.models;
 
 
+import java.util.LinkedHashMap;
+
 import static java.lang.Math.round;
 
 public class Nut2 {
@@ -20,6 +22,13 @@ public class Nut2 {
         this.YEAR_ID = YEAR_ID;
         this.indicator = indicator;
     }
+    public Nut2(LinkedHashMap<String, Object> item){
+        this.eu_code = (String) item.get("eu_code");
+        this.nut = (String) item.get("nut");;
+        this.YEAR_ID = (int) item.get("year_ID");
+        this.indicator = (double) item.get("indicator");
+    }
+
 
 
     public String getNut() {

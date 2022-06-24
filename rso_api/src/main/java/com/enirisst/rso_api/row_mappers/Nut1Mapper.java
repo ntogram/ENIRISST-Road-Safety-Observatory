@@ -10,6 +10,6 @@ public class Nut1Mapper implements  RowMapper<Nut1> {
 
     @Override
     public Nut1 mapRow(ResultSet rs, int rowNum) throws SQLException {
-          return new Nut1(rs.getString("eu_code"),rs.getString("nut"),rs.getInt("YEAR_ID"),rs.getLong("accident_number"));
+          return new Nut1(rs.getString("eu_code"),rs.getString("nut"),rs.getInt("YEAR_ID"),rs.getLong("indicator"));
     }
 }

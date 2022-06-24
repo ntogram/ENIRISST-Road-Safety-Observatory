@@ -1,18 +1,29 @@
 package com.enirisst.rso_api.models;
 
+import java.util.LinkedHashMap;
+
 public class Nut1 {
 private String eu_code;
 private String nut ;
 private  int YEAR_ID;
-private long  accident_number;
+private long  indicator;
 
 
-    public Nut1(String eu_code, String nut, int YEAR_ID, long accident_number) {
+    public Nut1(String eu_code, String nut, int YEAR_ID, long indicator) {
         this.eu_code = eu_code;
         this.nut = nut;
         this.YEAR_ID = YEAR_ID;
-        this.accident_number = accident_number;
+        this.indicator = indicator;
     }
+
+    public Nut1(LinkedHashMap<String, Object> item){
+        this.eu_code = (String) item.get("eu_code");
+        this.nut = (String) item.get("nut");;
+        this.YEAR_ID = (int) item.get("year_ID");
+        this.indicator = ((Number) item.get("indicator")).longValue();
+    }
+
+
 
     public String getNut() {
         return nut;
@@ -38,12 +49,12 @@ private long  accident_number;
         this.YEAR_ID = YEAR_ID;
     }
 
-    public long getAccident_number() {
-        return accident_number;
+    public long getIndicator() {
+        return indicator;
     }
 
-    public void setAccident_number(long accident_number) {
-        this.accident_number = accident_number;
+    public void setIndicator(long indicator) {
+        this.indicator = indicator;
     }
 
     @Override
@@ -52,7 +63,7 @@ private long  accident_number;
                 "eu_code='" + eu_code + '\'' +
                 ", nut='" + nut + '\'' +
                 ", YEAR_ID=" + YEAR_ID +
-                ", accident_number=" + accident_number +
+                ", indicator=" + indicator +
                 '}';
     }
 }

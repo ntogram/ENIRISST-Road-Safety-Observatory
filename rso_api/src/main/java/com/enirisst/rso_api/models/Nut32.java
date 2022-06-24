@@ -1,6 +1,7 @@
 package com.enirisst.rso_api.models;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Nut32 {
@@ -19,6 +20,13 @@ public class Nut32 {
         this.unemployment = unemployment;
         this.indicator = indicator;
     }
+    public Nut32(LinkedHashMap<String, Object> item){
+        this.eu_code = (String) item.get("eu_code");
+        this.nut = (String) item.get("nut");;
+        this.YEAR_ID = (int) item.get("year_ID");
+        this.indicator = (String) item.get("indicator");
+    }
+
 
     public String getEu_code() {
         return eu_code;
@@ -73,7 +81,7 @@ public class Nut32 {
         Map<String, Object> nut32_return=new HashMap<String,Object>();
         nut32_return.put("eu_code",eu_code);
         nut32_return.put("nut",nut);
-        nut32_return.put("YEAR_ID",YEAR_ID);
+        nut32_return.put("year_ID",YEAR_ID);
         nut32_return.put("indicator",indicator);
         return nut32_return;
     }
