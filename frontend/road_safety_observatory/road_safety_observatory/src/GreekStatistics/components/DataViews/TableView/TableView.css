@@ -1,0 +1,40 @@
+
+
+.b1{
+    border-bottom: 1px solid #6e6e6e;
+}
+
+.b2{
+    border-bottom: 1px solid #eee;
+}
+
+
+.b3{
+    border-bottom: 1px solid #b8b8b8;
+}
+
+.b4{
+    border-top:  1px solid #eee;
+}
+
+td.table-cell-center{
+    text-align: center;
+    vertical-align:middle;
+    font: normal normal normal 16px Open Sans;
+    color:#8d939c;
+    height: 50px;
+}
+
+th.header-format{
+    text-align: center;
+    vertical-align:middle;
+    color:#0a6db9;
+    background-color: #f2fbff;
+    font: normal normal normal 14px Open Sans;
+    height: 50px;
+}
+
+th.empty-header{
+     background-color: #FFFFFF;
+    height: 50px;
+}
