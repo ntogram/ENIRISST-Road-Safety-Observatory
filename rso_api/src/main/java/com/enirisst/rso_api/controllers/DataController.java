@@ -31,6 +31,7 @@ public class DataController {
     @GetMapping(path ="/retrieve_locations/{id}")
     public Map <String, List<String>> retrieveLocations(@PathVariable(name="id") Integer id){
        List<String> location_list=dataRepository.RetrieveLoc(id.intValue());
+        Collections.sort(location_list);//sort need fix
         HashMap<String, List<String>> locations = new HashMap<String, List<String>>();
         locations.put("locations",location_list);
         return locations;

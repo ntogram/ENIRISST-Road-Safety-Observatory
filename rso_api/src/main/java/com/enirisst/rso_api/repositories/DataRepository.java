@@ -66,13 +66,14 @@ public class DataRepository {
     public List<String> RetrieveLoc(int type){
         String table=return_loc_table(type);
         String field=return_loc_field(type);
-        String query="SELECT DISTINCT "+field+" FROM "+table;
-        System.out.print(query);
+        String query="SELECT DISTINCT "+field+" FROM "+table+" ORDER BY "+field;
+       // System.out.print(query);
         return  jdbcTemplate.query(query,
 
                 new RowMapper<String>() {
                     @Override
                     public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+                      //  System.out.println(rs.getString(field));
                         return new String(rs.getString(field));
                     }
                 });
