@@ -66,8 +66,8 @@ public class DataRepository {
     public List<String> RetrieveLoc(int type){
         String table=return_loc_table(type);
         String field=return_loc_field(type);
-        String query="SELECT DISTINCT "+field+" FROM "+table+" ORDER BY "+field;
-       // System.out.print(query);
+        String query="SELECT DISTINCT "+field+" FROM "+table;//+" ORDER BY "+field;
+        System.out.print(query);
         return  jdbcTemplate.query(query,
 
                 new RowMapper<String>() {

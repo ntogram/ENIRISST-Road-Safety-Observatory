@@ -1,6 +1,7 @@
 package com.enirisst.rso_api.controllers;
 
 
+import com.enirisst.rso_api.helper.greeksorting.GreekCollator;
 import com.enirisst.rso_api.models.AREA;
 import com.enirisst.rso_api.models.O;
 import com.enirisst.rso_api.repositories.DataRepository;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
 import java.sql.Struct;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -31,7 +33,11 @@ public class DataController {
     @GetMapping(path ="/retrieve_locations/{id}")
     public Map <String, List<String>> retrieveLocations(@PathVariable(name="id") Integer id){
        List<String> location_list=dataRepository.RetrieveLoc(id.intValue());
-        Collections.sort(location_list);//sort need fix
+       location_list=GreekCollator.sort(location_list, GreekCollator.CollatorEnum.Primary);
+//        for (String a:location_list){
+//           System.out.println(a);
+//       }
+      
         HashMap<String, List<String>> locations = new HashMap<String, List<String>>();
         locations.put("locations",location_list);
         return locations;
