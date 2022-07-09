@@ -10,15 +10,20 @@ import plus from"./images/+.png"
 import minus from"./images/-.png"
 import GreekArea from "../../../../GreekStatistics/components/MapDisplayer/GreekArea";
 import Greek_Region_Layer from "../../../../GreekStatistics/components/MapDisplayer/Greek_Region_Layer";
+//names of nuts3 areas are not same in db and json
 import greek_regions from "../../../../GreekStatistics/components/MapDisplayer/GR_NUTS3.json";
 import greek_oik from "../../../../GreekStatistics/components/MapDisplayer/oik_merge.json"
-//import greek_dim from "../../../../GreekStatistics/components/MapDisplayer/kal_dim_merge.json"; --memory problem
+import greek_dim from "../../../../GreekStatistics/components/MapDisplayer/Kal_Dim.json"; //--memory problem &&
+/* names of municipalities are not same in db and json
+Some muncipalities are not found in json
+*/
 import DefaultGreekLayer from "./DefaultGreekLayer";
 import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSelector";
 import  formoptions from "../../../FormView/formoptions.json"
 import axios from "axios";
 import NutLayer from "./NutLayer";
 import OikLayer from "./OikLayer";
+import DimLayer from "./DimLayer";
 
 
 
@@ -51,6 +56,12 @@ import OikLayer from "./OikLayer";
              if (props.formdata["selectedyears"] === undefined || props.formdata["selectedyears"].length === 0) {
                 return false
             }
+             if (props.formdata["areas"][0].group==="Επικράτεια"){
+                 return false
+             }
+
+
+
              return true
         }
 
@@ -156,6 +167,8 @@ import OikLayer from "./OikLayer";
                          //return null
 
                          return <OikLayer zipUrl={greek_oik} data={selectdata()} limits={limits} code={findIndicatorCode()} completed={props.completed}/>
+                     case "Δήμοι":
+                         return <DimLayer zipUrl={greek_dim} data={selectdata()} limits={limits} code={findIndicatorCode()} completed={props.completed}/>
                      default:
                          return null
                  }

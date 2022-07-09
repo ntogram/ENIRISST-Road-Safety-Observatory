@@ -1,15 +1,56 @@
 import React from 'react';
 import "./ParameterTable.css"
 import {useEffect} from "react";
+import NutLayer from "../MapDisplayer/NutLayer";
+import greek_regions from "../../../../GreekStatistics/components/MapDisplayer/GR_NUTS3.json";
+import OikLayer from "../MapDisplayer/OikLayer";
+import greek_oik from "../../../../GreekStatistics/components/MapDisplayer/oik_merge.json";
+import DimLayer from "../MapDisplayer/DimLayer";
+import greek_dim from "../../../../GreekStatistics/components/MapDisplayer/Kal_Dim.json";
 
 
-export default function  ParameterTable(props){
+export default function  ParameterTable(props) {
+
 
     useEffect(() => {
-        //console.log("parameters:")
-       // console.log(props.formdata)
+        console.log("parameters:")
+        console.log(props.formdata)
     })
 
+    const isSelectedAll = () => {
+        let counter = 0
+        let s = ""
+        if (Object.keys(props.formdata).length !== 0 ) {
+
+            let group = props.formdata["areas"][0]["group"]
+            console.log(group)
+            switch (group) {
+                case "Περιφερειακές Ενότητες (NUTS3)":
+                    counter = 52
+                    s = "Όλες οι " + group
+                    break
+                case "Οικισμοί":
+                    counter = 15878
+                    s = "Όλοι οι " + group
+                    break
+                case "Δήμοι":
+                    counter = 326
+                    s = "Όλοι οι " + group
+                    break
+            }
+            if ( props.formdata["areas"].length===counter){
+                return s
+            }
+        }
+
+
+    return props.formdata["areas"].map((item, i) => {
+        return (i === props.formdata["areas"].length - 1) ? (<span>{item.value}</span>) : (<span>{item.value},</span>)
+    })
+
+
+
+    }
 
 
 
@@ -25,12 +66,15 @@ export default function  ParameterTable(props){
               <tr className={"dataprameter-content "}>
                 <td id={"dataparameter-cell"} className={"gap"}>
                     {
+                        isSelectedAll()
+                    }
+                    {/*{
                         props.formdata["areas"].map((item, i)=>{
                              return (i===props.formdata["areas"].length-1)?( <span>{item.value}</span>):( <span>{item.value},</span>)
                         })
 
 
-                    }
+                    }*/}
                 </td><td id={"dataparameter-cell"} className={"gap"}>
               {
                         props.formdata["indicators"].map((item, i)=>{

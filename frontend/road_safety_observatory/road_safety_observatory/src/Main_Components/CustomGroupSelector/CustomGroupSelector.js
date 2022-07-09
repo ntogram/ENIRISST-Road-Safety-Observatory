@@ -15,6 +15,7 @@ const styles = {
      // marginLeft:"21%"
      // opacity: 10 ? 1 : 0
     }),
+    menuPortal: base => ({ ...base, zIndex: 9999 }),
     menu: ({ width, ...css }) => ({
       ...css,
       width: "90%",
@@ -586,6 +587,7 @@ const closeMenu=()=>{
     <Select
         ref={selectref}
        styles={styles}
+       menuPortalTarget={document.body}
        filterOption={createFilter({ ignoreAccents: false })}
       isOptionSelected={isOptionSelected}
       options={getOptions(search_term)}

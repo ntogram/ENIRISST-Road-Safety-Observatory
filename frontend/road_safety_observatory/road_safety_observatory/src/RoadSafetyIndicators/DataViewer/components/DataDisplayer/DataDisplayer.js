@@ -33,6 +33,12 @@ import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSel
              return null
         }
          else{
+             if (Object.keys(props.formdata).length !== 0 ) {
+                 if (props.formdata["areas"].length > 20) {
+                     return null
+                 }
+             }
+
            return(  props.formdata["indicators"].map((element,idx)=>{
                  return <ChartBar chartdata={data} formstatus={formstatus} formdata={props.formdata} indicator={element.value} group={props.formdata["areas"][0].group} name={idx}/>
                  }
@@ -45,6 +51,13 @@ import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSel
              return null
         }
          else{
+             if (Object.keys(props.formdata).length !== 0 ) {
+                 if (props.formdata["areas"][0].group === "Επικράτεια") {
+                     return null
+                 }
+             }
+
+
               return(
                   <div>
                     <Dataplot chartdata={data} formstatus={formstatus} formdata={props.formdata}  group={props.formdata["areas"][0].group}/>
@@ -57,9 +70,18 @@ import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSel
             }
     }
 
+    const disableTabs=()=>{
+             if (Object.keys(props.formdata).length !== 0 ) {
+                 if(props.formdata["areas"].length>20 || props.formdata["areas"][0].group==="Επικράτεια"){
+                     return true
+                 }
+             }
+    }
+
+
     React.useEffect(() => {
         // console.log("sdx")
-      //   console.log(props)
+        console.log(props.formdata)
         if (props.completed===true && index!==-1 && formstatus===true){
             setIndex(-1)
         }
