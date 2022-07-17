@@ -1,5 +1,5 @@
 import React, {Component, useEffect, useRef, useState} from "react";
-import {TileLayer, Popup, Marker, MapContainer} from "react-leaflet";
+import {TileLayer, Popup, Marker, MapContainer, useMap} from "react-leaflet";
 import ZoomController from "./ZoomController"
 
 
@@ -24,11 +24,47 @@ import axios from "axios";
 import NutLayer from "./NutLayer";
 import OikLayer from "./OikLayer";
 import DimLayer from "./DimLayer";
+import html2canvas from "html2canvas";
+import {jsPDF} from "jspdf";
 
+function Download(props) {
+    const map = useMap()
+     useEffect(() => {
+         let center=map.getCenter()
+         let zoom=map.getZoom()
+         console.log(center)
+         console.log(zoom)
+         if (props.ds===true){
+             if(zoom!==5){
+                map.setView({lat:36.24068432457244,lng:22.961684549417058},5)
+           //  if (center["lat"]!==36.24068432457244 && center["lng"]!==22.961684549417058 && zoom!==5){
+                //map.setView({lat:36.24068432457244,lng:22.961684549417058},5)
+             }
+         }
+         if (zoom===5){
+              let state=localStorage.getItem("state")
+               console.log(state)
+              if (state!==undefined) {
 
+                 props.exportdata(true).then(r => {})
+                  localStorage.removeItem("state")
 
+              }
+         }
+
+         console.log("After")
+         console.log(map.getZoom())
+         /*if(props.ds===true){
+             props.setds(false)
+         }*/
+
+     })
+
+    return null
+}
 
     function MapDisplayer(props) {
+
 
           const position =  [38.58, 24]
           const prevyear=React.useRef();
@@ -36,15 +72,56 @@ import DimLayer from "./DimLayer";
           const [year,setyear]=React.useState(null)
           const [indicator,setindicator]=React.useState(null)
           const [limits,setlimits]=React.useState(null)
-         // const [indcode,setindcode]=React.useState(null)
           const [changed,setchanged]=React.useState(false)
-     function DownloadImage() {
-        console.log("image")
+           const [ds,setds]=React.useState(false)
+
+
+
+     const  export_table=(cl)=>{
+        console.log(props.name)
+        let options={width: 800, height: 600,backgroundColor:null}
+         let tb=document.getElementById("mymap")
+         let a=html2canvas(tb,options).then(function (canvas) {
+                 let a = document.createElement('a');
+                 a.href = canvas.toDataURL("image/png", 1.0);
+                 console.log(canvas)
+                 a.download = "data.png"
+                 if (cl===true){
+                      a.click();
+                 }
+                 return canvas
+             });
+         return a
+    }
+
+    function DownloadImage() {
+        if (isCompleted()){
+            if (ds===false){
+              console.log("image")
+              localStorage.setItem("state","png")
+              setds(true)
+         }
+
+
+
+
+             // export_table(true).then(r => {
+             // });
+             // export_data(true).then(r => {
+             // });
+
+
+        }
+
     }
 
     function DownloadPDF() {
 
-        console.log("PDF")
+       if (isCompleted()){
+            console.log("PDF")
+            localStorage.setItem("state","pdf")
+           setds(true)
+        }
     }
     function  displayoptions() {
         if (props.formdata === undefined || Object.keys(props.formdata).length === 0 || props.completed===false) {
@@ -150,8 +227,23 @@ import DimLayer from "./DimLayer";
 
     }
 
+
+   const  isCompleted=()=>{
+               if(Object.keys(props.formdata).length!==0 && year!=null && indicator!=null) {
+                   return true
+               }
+               else{
+                   return false
+               }
+    }
+
+
+    const btn_style=()=>{
+
+    }
+
+
     const showVisualizationLayer=()=>{
-             console.log("svm")
              if(Object.keys(props.formdata).length!==0 && year!=null && indicator!=null) {
 
                  let group = props.formdata["areas"][0]["group"]
@@ -182,19 +274,46 @@ import DimLayer from "./DimLayer";
              //   console.log(props.formdata)
              //   console.log(props.data.current)
                 calculate_indcode()
+
                // let data=selectdata()
               //  console.log(limits)
                 //console.log(JSON.parse(localStorage.getItem("limits")))
                 prevyear.current=year
                 previndicator.current=indicator
+                if (ds===true){
+                      let t=localStorage.getItem("state")
+                     console.log(t)
+                      if (t==="png"){
+                          export_table(true).then(r => {});
+                          localStorage.removeItem("state")
+                          setds(false)
+                      }
+                       if (t==="pdf"){
+                            let doc = new jsPDF();
+                            let width = doc.internal.pageSize.getWidth();
+                            let height = doc.internal.pageSize.getHeight();
+                           export_table(false).then(r => {
+
+                                   let img = r.toDataURL("image/png", 1.0);
+                                   doc.addImage(img, 'PNG', 0, 0, r.width / 2, r.height / 2);
+                                   doc.save("data" + ".pdf");
+
+                           })
+                           localStorage.removeItem("state")
+                           setds(false)
+                      }
+
+
+
+                }
             })
 
 
         return (
             <div id={"map2"} style={{width:"80%"}} className={"data-table-view"}>
         <div style={{marginTop:"2%",marginLeft:"80%"}}>
-            <FontAwesomeIcon icon={faFileImage} style={{color:"#CED4DA",marginRight:"15%"}} size="lg" title={"Download png"} onClick={DownloadImage} />
-            <FontAwesomeIcon icon={faFilePdf} style={{color:"#CED4DA"}} size="lg" title={"Download pdf"} onClick={DownloadPDF} />
+            <FontAwesomeIcon icon={faFileImage} style={{ color:(isCompleted())?"#0F8DD6":"#CED4DA",cursor: (props.completed)?"pointer":"auto",marginRight:"15%"}} size="lg" title={"Download png"} onClick={DownloadImage} />
+            <FontAwesomeIcon icon={faFilePdf} style={{ color:(isCompleted())?"#0F8DD6":"#CED4DA",cursor: (isCompleted())?"pointer":"auto"}} size="lg" title={"Download pdf"} onClick={DownloadPDF} />
         </div>
 
        <hr style={{marginLeft:"5%",width:"90%"}}className={"data-sep"}/>
@@ -227,7 +346,8 @@ import DimLayer from "./DimLayer";
 
             <DefaultGreekLayer zipUrl={greek_regions}/>
                 {showVisualizationLayer()}
-            <ZoomController/>
+                {ds==false ?<ZoomController/>:null}
+                {/*<Download ds={ds} setds={setds} exportdata={export_table} />*/}
             </MapContainer>
             </div>
             </div>

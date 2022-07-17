@@ -9,6 +9,7 @@ import DataTable from "./DataTable/DataTable";
 import ChartBar from "../Chartbar/ChartBar";
 import {Dataplot} from "./Dataplot/Dataplot";
 import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSelector";
+import html2canvas from "html2canvas";
 
 
 
@@ -19,13 +20,40 @@ import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSel
         const [formstatus,setformstatus]=useState(false)
          const prevformstatus=React.useRef()
         const [data,setdata]=useState([])
+
+
+      const  export_data=(cl)=>{
+         let tb=document.getElementById("dataparameter")
+         let a=html2canvas(tb,{width:3000,height:3000}).then(function (canvas) {
+                 let a = document.createElement('a');
+                 a.href = canvas.toDataURL("image/png", 1.0);
+                 console.log(canvas)
+                 a.download = props.name + ".png"
+                 if (cl===true){
+                      a.click();
+                 }
+                 return canvas
+             });
+         return a
+    }
+
+
      function DownloadImage() {
-        console.log("image")
+        if (props.completed){
+            console.log("image")
+             // export_data(true).then(r => {
+             // });
+
+
+        }
+
     }
 
     function DownloadPDF() {
 
-        console.log("PDF")
+       if (props.completed){
+            console.log("PDF")
+        }
     }
 
     const formChartArea = ()=>{
@@ -80,8 +108,7 @@ import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSel
 
 
     React.useEffect(() => {
-        // console.log("sdx")
-        console.log(props.formdata)
+
         if (props.completed===true && index!==-1 && formstatus===true){
             setIndex(-1)
         }
@@ -123,11 +150,14 @@ import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSel
     {/*    </div>*/}
     {/*</nav>*/}
         <div style={{marginLeft:"80%",marginTop:"5%"}}>
-            <FontAwesomeIcon icon={faFileImage} style={{color:"#CED4DA",marginRight:"15%"}} size="lg" title={"Download png"} onClick={DownloadImage} />
-            <FontAwesomeIcon icon={faFilePdf} style={{color:"#CED4DA"}} size="lg" title={"Download pdf"} onClick={DownloadPDF} />
+            <FontAwesomeIcon icon={faFileImage} style={{
+
+                color:(props.completed)?"#0F8DD6":"#CED4DA",cursor: (props.completed)?"pointer":"auto",marginRight:"15%"}} size="lg" title={"Download png"} onClick={DownloadImage} />
+            <FontAwesomeIcon icon={faFilePdf} style={{color:(props.completed)?"#0F8DD6":"#CED4DA",cursor: (props.completed)?"pointer":"auto"}} size="lg" title={"Download pdf"} onClick={DownloadPDF} />
         </div>
 
        <hr style={{marginLeft:"5%",width:"90%"}} className={"data-sep"}/>
+                <div id={"mydataframe"}>
                 {Object.keys(props.formdata).length !== 0?<ParameterTable formdata={props.formdata} />:<DataNofound/>}
                 <div style={{display:(index===-1)?"block":"none"}} id={"default"}></div>
                 <div style={{display:(index===0)?"block":"none"}} id={"0"}>
@@ -143,7 +173,7 @@ import CustomSelector from "../../../../Main_Components/CustomSelector/CustomSel
                  <div style={{display:(index===2)?"block":"none",maxHeight:"400px",
                         maxWidth:"600px",overflow: 'auto'}} id={"2"}><DataTable setCompleted={props.setCompleted} formdata={props.formdata} completed={props.completed} setdata={setdata} formstatus={formstatus} setFormStatus={setformstatus}/></div>
 
-
+            </div>
             </div>
         )
 

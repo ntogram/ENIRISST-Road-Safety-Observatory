@@ -9,31 +9,40 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import {MapContainer, Marker, Popup, TileLayer, useMap} from "react-leaflet";
 import MapDisplayer from "../../MapDisplayer/MapDisplayer";
+
+
+
+
+
+
 export default function MainView(props) {
 //const map = useMap()
 const [content,setContent]=React.useState(undefined)
+ const [map_download,setmapdownload]=React.useState(false)
     const defineview=()=>{
         if (props.type===0){
-            return <TableView name={props.name}/>
+            return <TableView year={props.year} name={props.name}/>
         }
         if (props.type===1){
 
-            return <ChartView type={"stacked_bar"} name={props.name} setContent={setContent}/>
+
+
+
+            return <ChartView year={props.year} type={"stacked_bar"} name={props.name} setContent={setContent}/>
         }
         if (props.type===2 || props.type==5 || props.type==6){
-
-            return <ChartView type={"horizontal_bar"} name={props.name} setContent={setContent}/>
+            return <ChartView year={props.y} type={"horizontal_bar"} name={props.name} setContent={setContent}/>
         }
          if (props.type===3){
 
-            return <ChartView type={"line"} name={props.name} setContent={setContent}/>
+            return <ChartView y1={props.y1} y2={props.y2}  type={"line"} name={props.name} setContent={setContent}/>
         }
         if (props.type===4){
-             return <ChartView type={"line_bar"} name={props.name} setContent={setContent}/>
+             return <ChartView y1={props.y1} y2={props.y2} type={"line_bar"} name={props.name} setContent={setContent}/>
         }
         if (props.type===7){
 
-            return <MapDisplayer name={props.name} setContent={setContent}/>
+            return <MapDisplayer map_download={map_download} setmapdownload={setmapdownload} name={props.name} setContent={setContent}/>
 
         }
         else{
@@ -42,17 +51,19 @@ const [content,setContent]=React.useState(undefined)
     }
 
     const  export_table=(cl)=>{
+        console.log(props.name)
+        let options={width: 800, height: 600}
          let tb=document.getElementById(props.name)
-         let a=html2canvas(tb).then(function (canvas) {
+         let a=html2canvas(tb,options).then(function (canvas) {
                  let a = document.createElement('a');
                  a.href = canvas.toDataURL("image/png", 1.0);
+                 console.log(canvas)
                  a.download = props.name + ".png"
                  if (cl===true){
                       a.click();
                  }
                  return canvas
              });
-       //  console.log("hello")
          return a
     }
    // download image & pdf needs fixes
@@ -107,7 +118,7 @@ const [content,setContent]=React.useState(undefined)
         // console.log(content.width+","+content.height)
         doc.addImage(img, 'PNG', 0, 0, width, width );
 	    doc.save( props.name + ".pdf");
-        console.log("PDF")
+        //console.log("PDF")
     }
 
     // Update the document title using the browser API    document.title = `You clicked ${count} times`;  });

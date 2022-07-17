@@ -97,7 +97,7 @@ export default function YearSelector(props) {
       //  styles={styles}
         defaultValue={selectedOption}
         onChange={setYear}
-        options={options}
+        options={props.options}
       />
         {/*<div className={"year_selector_help"}>Διαλέξτε την ημερομηνία για να δείτε τα σχετικά αποτελέσματα. </div>*/}
     </div>

@@ -1,5 +1,10 @@
-
-
+// data
+import g1 from "./chart_data/graph1.json"
+import g2 from "./chart_data/graph2.json"
+import g4 from "./chart_data/graph4.json"
+import g6 from "./chart_data/graph6.json"
+import g5 from "./chart_data/graph5.json"
+import g7 from "./chart_data/graph7.json"
 import React from "react";
 import Chart from "chart.js/auto";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -7,6 +12,8 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 //import plugin from "chartjs-plugin-datalabels";
 export default function ChartView(props) {
     const [ready,setready]=React.useState(false);
+    const prevprop=React.useRef();
+    const [chart,setChart]=React.useState(undefined)
     const plugin = {
         id: props.name+"_DataChart",
         beforeDraw: (chart) => {
@@ -22,21 +29,86 @@ export default function ChartView(props) {
          let canvas = document.getElementById(props.name + "_DataChart");
          let myChart = new Chart(canvas, config)
          props.setContent(myChart)
+         setChart(myChart)
     }
+
+
+
+    const calc_bar_line_results=()=>{
+        let result =null
+        let years=[]
+        for(let i=props.y1;i<props.y2+1;i++){
+           years.push(i)
+         }
+        let b=false
+        let g= (props.name==="accident_death_injury")?g4:g5
+
+
+
+        if (props.name==="accident_death_injury"){
+            let records = g4.filter(
+                (r) => {
+                    if (years.includes(r["Έτος"]) === true) {
+                        return r
+                    }
+                }
+            )
+            let a1 = []
+            let a2 = []
+            let a3 = []
+            let a4 = []
+            for (let i = 0; i < records.length; i++) {
+                a1.push(records[i]["Αριθμός Ατυχημάτων"])
+                a2.push(records[i]["Ελαφρά Τραυματίες"])
+                a3.push(records[i]["Βαριά Τραυματίες"])
+                a4.push(records[i]["Νεκροί"])
+            }
+            result = {"Έτη": years, "Ατυχήματα": a1, "Ελαφριά": a2, "Βαριά": a3, "Νεκροί": a4}}
+        else{
+                let a1=[]
+                let a2=[]
+                let rd={}
+                for (let i = 0; i < g5.length; i++) {
+                    for(let j=0;j<years.length;j++){
+
+                        a1.push(parseFloat(g5[i][years[j]])*100)
+                    }
+                    let random_color="#"+Math.floor(Math.random()*16777215).toString(16)
+                    rd={
+                        label:g5[i]["Χώρες"],
+                        data:a1,
+                        fill:false,
+                        backgroundColor: random_color,
+                        borderColor: random_color,
+                        tension: 0.1
+                    }
+                    a2.push(rd)
+                    a1=[]
+                    rd={}
+                }
+                result={"Έτη":years,"datasets":a2}
+                console.log(result)
+
+        }
+
+        return result
+    }
+
+
+
+
     const create_bar_line_chart=()=>{
-        const categories=["AXD","VOL","ATH",
-            "JKN","JIK","JOA","KIT",
-            "EFL","LXS","JSI","JSI","JSI","JIK","IOA","KIT",
-            "EFL","LXS","JSI","JSI","JSI","JSI","JSI"
-        ]
+       let results=calc_bar_line_results()
+
+     //   console.log(results)
         const data = {
-            labels: categories
+            labels: results["Έτη"]
                 ,
             datasets: [
                 {
                 type: 'line',
                 label: 'Ελαφριά',
-                data: create_line_data(2000,30000,22),
+                data: results["Ελαφριά"],
                 fill: false,
                borderColor: "#B085D6",
                backgroundColor: "rgba(176,133,214,2)",
@@ -46,7 +118,7 @@ export default function ChartView(props) {
            {
                 type: 'line',
                 label: 'Βαριά',
-                data: create_line_data(2000,30000,22),
+                data:  results["Βαριά"],
                 fill: false,
                 borderColor: "#FF9B91",
                 backgroundColor: "rgba(255,155,145,1)",
@@ -56,7 +128,7 @@ export default function ChartView(props) {
             {
                 type: 'line',
                 label: 'Νεκροί',
-                data: create_line_data(2000,30000,22),
+                data: results["Νεκροί"],
                 fill: false,
                 backgroundColor: 'rgba(135,214,220,1)',
                 borderColor: '#87D6DC',
@@ -67,7 +139,7 @@ export default function ChartView(props) {
                 {
                 type: 'bar',
                 label: 'Ατυχήματα',
-                data: create_line_data(2000,30000,22),
+                data: results["Ατυχήματα"],
                 borderColor: "#012D81",
                 backgroundColor: 'rgba(1,45,129,1)',
                 yAxisID: 'y',
@@ -76,76 +148,6 @@ export default function ChartView(props) {
 
             ]
         };
-        // const categories=["AXD","VOL","ATH",
-        //     "JKN","JIK","JOA","KIT",
-        //     "EFL","LXS","JSI","JSI","JSI","JIK","IOA","KIT",
-        //     "EFL","LXS","JSI","JSI","JSI","JSI","JSI"
-        // ]
-        // let acc_data=create_line_data(2000,30000,22)
-        // let death_data=create_line_data(2000,30000,22)
-        // let light_inj=create_line_data(2000,30000,22)
-        // let severe_inj=create_line_data(2000,30000,22)
-        // let data = {
-        //     labels: categories,
-        //     datasets: [
-        //         {
-        //             type: 'bar',
-        //             label: 'Ατυχήματα',
-        //             data: acc_data,
-        //             borderColor: "#012D81",
-        //             backgroundColor: "#012D81"
-        //
-        //         },
-        //         {
-        //             type: 'line',
-        //             label: 'Ελαφριά',
-        //             data: light_inj,
-        //             fill: false,
-        //             borderColor: "#B085D6",
-        //             backgroundColor: "#B085D6"
-        //         }, {
-        //             type: 'line',
-        //             label: 'Βαριά',
-        //             data:severe_inj,
-        //             fill: false,
-        //             borderColor: "#FF9B91",
-        //             backgroundColor: "#FF9B91"
-        //         }, {
-        //             type: 'line',
-        //             label: 'Νεκροί',
-        //             data: death_data,
-        //             fill: false,
-        //             backgroundColor: '#87D6DC',
-        //             borderColor: '#87D6DC',
-        //         }
-        //     ]
-        // }
-        // const config = {
-        //     type: 'scatter',
-        //     data: data,
-        //       options:{
-        //
-        //         plugins: {
-        //     legend: {
-        //         position:"bottom"
-        //     }
-        //     },
-        //         scales: {
-        //                     x:
-        //                         {
-        //                             grid: {
-        //                                 display: false
-        //                             }
-        //
-        //                         },
-        //                     // y: {
-        //                     //
-        //                     //    // beginAtZero: true
-        //                     // }
-        //                 }
-        //             }
-        //
-        // };
         const config = {
             type: 'bar',
             data: data,
@@ -169,7 +171,9 @@ export default function ChartView(props) {
                         type: 'linear',
                         display: true,
                         position: 'left',
-                        beginAtZero: true
+                        beginAtZero: true,
+                         min: 0,
+                        max: 40000,
                     },
                     y1: {
                         type: 'linear',
@@ -177,7 +181,7 @@ export default function ChartView(props) {
                         position: 'right',
                         beginAtZero: true,
                         min: 0,
-                        max: 30000,
+                        max: 10000,
                 },
             }
 
@@ -188,22 +192,105 @@ export default function ChartView(props) {
          props.setContent(myChart)*/
     }
 
+    const findChartData=()=>{
+        let result
+        if (props.name==="databycountrydeaths"){
+            let a=g1.map(a=>{
+                return {"country": a["Χώρες"],"value":a[props.year]}}
+             )
+             a= a.sort((c1, c2) => {
+                   let a,b
+                   if (c1.value==="n/a"){
+                       a=-1
+                   }
+                   if (c2.value==="n/a"){
+                       b=-1
+                   }
+                   if (a!==-1){
+                       a=parseInt(c1.value)
+                   }
+                   if (b!==-1){
+                       b=parseInt(c2.value)
+                   }
+                    return a - b;
+                }
+            ).reverse()
+           let  labels = a.map(k => k["country"]);
+           let colors=labels.map(a=>{
+               if (a==="Ελλάδα "){
+                    return "#FF9B91"
+               }
+               else{
+                    return"#012D81"
+               }
+
+           })
+           let data=a.map(k=>k["value"])
+            result={"categories":labels,"data":data,"colors":colors}
+        }
+        else{
+            if(props.name==="acc_death_per_million1"|| props.name==="acc_death_per_million2"){
+              //  console.log(props.year)
+                let a=[]
+                for (let i=0;i<g2.length;i++) {
+                    if (g2[i]["GEO"] !== "EU-27") {
+                        a.push({"country": g2[i]["Χώρες"], "value": g2[i][props.year]})
+                    }
+                }
+                a = a.sort((c1, c2) => {
+                        let a, b
+                        if (c1.value === "n/a") {
+                            a = -1
+                        }
+                        if (c2.value === "n/a") {
+                            b = -1
+                        }
+                        if (a !== -1) {
+                            a = parseInt(c1.value)
+                        }
+                        if (b !== -1) {
+                            b = parseInt(c2.value)
+                        }
+                        return a - b;
+                    }
+                ).reverse()
+               // console.log(a)
+                let labels = a.map(k => k["country"]);
+                let colors = labels.map(a => {
+                    if (a === "Ελλάδα ") {
+                        return  "#75D1D8"
+                    } else {
+                        return "#13A2DE"
+                    }
+
+                })
+                let data = a.map(k => k["value"])
+                result = {"categories": labels, "data": data, "colors": colors}
+            }
+            else{
+                  result=null
+            }
 
 
-    const create_horizontal_bar_chart= (ds,cl,c)=> {
+
+        }
+        return result
+
+    }
+
+
+    const create_horizontal_bar_chart= (c)=> {
         Chart.register(annotationPlugin);
-        const categories = ["Γαλλία", "Ιταλία", "Γερμανία", "Πολωνία", "Ρουμανία", "Ισπανία",
-            "Πορτογαλία", "Ελλάδα", "Βέλγιο", "Βουλγαρία", "Τσεχία", "Ουγγαρία",
-            "Ολλανδία", "Αυστρία", "Κροατία", "Σλοβακία", "Σουηδία", "Φινλανδία",
-            "Δανία", "Ελβετία", "Λιθουανία", "Ιρλανδία", "Λετονία", "Νορβηγία", "Σλοβενία",
-            "Κύπρος", "Εσθονία", "Λουξεμβούργο", "Μάλτα", "Ισλανδία", "Λιχτενστάιν"]
+       // console.log(findChartData())
+        const result=findChartData()
+     //  console.log(result)
         const data = {
-            labels: categories,
+            labels: (result===null)?[]:result["categories"],
             datasets: [
                 {
 
-                    data: ds,
-                    backgroundColor: cl,datalabels: c["dls"]?{
+                    data: (result===null)?[]:result["data"],
+                    backgroundColor: (result===null)?[]:result["colors"],datalabels: c["dls"]?{
           color: '#8D939C'
         }:{}
                 }]
@@ -236,10 +323,10 @@ export default function ChartView(props) {
                     },
                      x: {
                          min: 0,
-                         max: c["max"],
+                         max: parseInt(result["data"][0])+c["offset"],
                         title: {
                             display: true,
-                            text: 'Νεκροί(Χιλιάδες)',
+                            text: (props.name==="databycountrydeaths")?"Νεκροί":"Νεκροί (χιλιάδες)",
                             align :"end"
                         },
 
@@ -248,7 +335,7 @@ export default function ChartView(props) {
 
                 responsive: true,
                 plugins: {
-                    autocolors: false,
+                    autocolors: true,
                     title: {
                         display: true,
                         text: 'Χώρες',
@@ -301,61 +388,11 @@ export default function ChartView(props) {
     }
 
     const create_line_chart=()=>{
-        let years=[]
-        for (let i=2010;i<2020;i++){
-            years.push(i)
-        }
+        let results=calc_bar_line_results()
+
         let data={
-            labels:years,
-            datasets:[
-                {
-                    label: 'Ευρωπαϊκή Ένωση',
-                    data: create_line_data(50,96,10),
-                    fill: false,
-                    backgroundColor: '#FFA69E',
-                    borderColor: '#FFA69E',
-                    tension: 0.1
-  },
-                {
-                    label: 'Ιρλανδία',
-                    data: create_line_data(50,96,10),
-                    fill: false,
-                    backgroundColor: '#18408C',
-                    borderColor: '#18408C',
-                    tension: 0.1
-  },
-                {
-                    label: 'Ισπανία',
-                    data: create_line_data(50,96,10),
-                    fill: false,
-                    backgroundColor: '#FEB184',
-                    borderColor: '#FEB184',
-                    tension: 0.1
-  }
-  ,{
-                    label: 'Γαλλία',
-                    data: create_line_data(50,96,10),
-                    fill: false,
-                    backgroundColor: '#2797D9',
-                    borderColor: '#2797D9',
-                    tension: 0.1
-  },
-                {
-                    label: "Ελλάδα",
-                    data: create_line_data(50,96,10),
-                    fill: false,
-                    backgroundColor: '#87D6DC',
-                    borderColor: '#87D6DC',
-                    tension: 0.1
-  },{
-                    label: 'Πολωνία',
-                    data: create_line_data(50,96,10),
-                    fill: false,
-                    backgroundColor: '#204790',
-                    borderColor: '#204790',
-                    tension: 0.1
-  }
-            ]
+            labels: results["Έτη"],
+            datasets:results["datasets"]
         }
         let config = {
             type: 'line',
@@ -364,7 +401,7 @@ export default function ChartView(props) {
             options:{
                 elements: {
                     point:{
-                        radius: 0
+                        radius: 1
                     }
                 },
                 plugins: {
@@ -383,11 +420,12 @@ export default function ChartView(props) {
                             y: {
 
                                 ticks: {
+                                    display:true
                                    // min: 0,
                                    // max: 100,// Your absolute max value
-                                    callback: function (value) {
-                                        return value + '%'; // convert it to percentage
-                                    },
+                                   //  callback: function (value) {
+                                   //      return value + '%'; // convert it to percentage
+                                   //  },
                                 }
                             }
                         }
@@ -396,66 +434,58 @@ export default function ChartView(props) {
          draw_canvas(config)
     }
 
+
+
+    const getStackedData=(r)=>{
+        let values=[]
+      for (const [key, value] of Object.entries(r)){
+
+          if (key!=="Έτος"){
+             // console.log(parseFloat(value))
+               values.push(parseFloat(value)*100)
+          }
+      }
+      return values
+    }
+
     const create_stacked_bar_chart=()=>{
 
 
         if (props.name==="databyage"){
-            // Chart.register(ChartDataLabels);
-            // Chart.defaults.set('plugins.datalabels', {
-            //          color: '#FE777B'
-            //     });
-           const categories=["0-14","18-24","25-49","50-64","65+"]
+
+            let agegroups=Object.keys(g6[0]).filter ((elem)=>
+                elem!=="Έτος"
+            )
+            let p=g6.find((elem=>elem["Έτος"]===props.year))
+            let percentages=getStackedData(p)
+           // console.log(percentages)
            const data = {
-  labels: categories,
-  datasets:[
-      {
-          data: [4, 11, 37, 19, 26],
-          backgroundColor: '#75D1D8',
-          borderWidth: 1,
-          xAxisID: "x",
-          stack: "background",
-          datalabels: {
-          display:false
+               labels: agegroups,
+               datasets: [
+                   {
+                       data: percentages,
+                       backgroundColor: '#75D1D8',
+                       borderWidth: 1,
+                       xAxisID: "x",
+                       stack: "background",
+                       datalabels: {
+                           display: false
 
-          },
-      },
-      {
-          data: [95, 95, 95, 95, 95],
-          borderWidth: 1,
-          backgroundColor: '#EBF7FF',
-          xAxisID: "x1",
-          stack: "background",
-          datalabels: {
+                       },
+                   },
+                   {
+                       data: [95, 95, 95, 95, 95,95],
+                       borderWidth: 1,
+                       backgroundColor: '#EBF7FF',
+                       xAxisID: "x1",
+                       stack: "background",
+                       datalabels: {},
 
-
-
-          },
-
-      },
+                   },
 
 
-
-  ]}
-
-
-
-
-
-//       [{
-//
-//     data: [4, 11, 37, 19, 26],
-//     backgroundColor: [
-//       '#75D1D8',
-//       '#75D1D8',
-//       '#75D1D8',
-//       '#75D1D8',
-//       '#75D1D8',
-//     ], datalabels: {
-//           color: '#FFCE56'
-//         }
-//   },
-//   ]
-// };
+               ]
+           }
                 let config = {
                     type: 'bar',
                     plugins: [ChartDataLabels,plugin],
@@ -470,10 +500,10 @@ export default function ChartView(props) {
                                 align: 'end',
                                 formatter: function(value, context) {
                                     
+                                        //console.log(data["datasets"][0].data[context.dataIndex])
 
 
-
-                            return data["datasets"][0].data[context.dataIndex]+"%";},
+                            return Math.round(data["datasets"][0].data[context.dataIndex])+"%";},
                                 labels: {
 
                                     value: {
@@ -546,17 +576,20 @@ export default function ChartView(props) {
 
 
             if (props.name==="databysex"){
-                const categories=["Άντρες","Γυναίκες"]
+                const categories=Object.keys(g7[0]).filter ((elem)=> elem!=="Έτος")
+                let p=g7.find((elem=>elem["Έτος"]===props.year))
+                let values=getStackedData(p)
+
                 let data = {
                     labels: categories,
                     datasets: [{
                         label: 'Άντρες',
-                        data: [84.0, 16.0],
+                        data: [Math.round(values[1]),Math.round(values[0])],
                         backgroundColor: "#75D1D8",
                     },
                         {
                             label: 'Γυναίκες',
-                            data: [16., 84.0],
+                            data:[Math.round(values[0]),Math.round(values[1])],
                             backgroundColor: "#EBF7FF",
                         }]
 
@@ -570,6 +603,24 @@ export default function ChartView(props) {
                             legend: {
                                 display: false
                             },
+                            tooltip: {
+                                callbacks: {
+                                    title: function (context) {
+                                        if (context[0].dataIndex==context[0].datasetIndex){
+                                             return "Άντρες"
+                                        }
+                                        else{
+                                            return "Γυναίκες"
+                                        }
+                                    },
+
+
+                                     label: function(tooltipItems) {
+
+                                         return tooltipItems.formattedValue+"%"
+                                    }
+                                },
+                                }
                         },
                         responsive: true,
                         scales: {
@@ -580,13 +631,13 @@ export default function ChartView(props) {
                                 stacked: true,
                                 min: 0,
                                 max: 100,
-                                ticks: {
+                               /* ticks: {
                                    // min: 0,
                                    // max: 100,// Your absolute max value
                                     callback: function (value) {
                                         return value + '%'; // convert it to percentage
                                     },
-                                }
+                                }*/
                             }
                         }
                     }
@@ -600,69 +651,135 @@ export default function ChartView(props) {
 
     }
 
+    const isUpdated=()=>{
+        if(props.type==="line" || props.type==="line_bar"){
 
+            if (prevprop.current!==undefined){
+                 if (props.y1===prevprop.current.y1 && props.y2===prevprop.current.y2){
+                        return false
+            }
+            }
+        }
+        else{
+            if (props.name === "acc_death_per_million1" || props.name === "acc_death_per_million2") {
+                console.log(props.name)
+                console.log(prevprop.current)
+                console.log(props.year)
+            }
+
+
+
+            if (prevprop.current===props.year){
+                return false
+            }
+        }
+        return true
+    }
 
      React.useEffect(() => {
         if( ready===false){
             if (props.type==="stacked_bar"){
                 create_stacked_bar_chart();
+                prevprop.current=props.year
             }
             if (props.type==="horizontal_bar"){
-                let ds,cl
                 let c={}
-                let dl={}
-                let dc=45
+
                 switch (props.name){
                     case "databycountrydeaths":
-                        ds = [2975, 2975, 2763, 2763, 1185, 1162,
-                        1162, 1115, 1106, 1106, 1106, 964,
-                        980, 980, 964, 845, 845, 805,
-                        805, 686, 686, 673, 582, 108, 102,
-                        52, 52, 22, 16, 6, 0]
-                        cl = ["#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81",
-                        "#012D81", "#FF9B91", "#012D81", "#012D81", "#012D81", "#012D81",
-                        "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81",
-                        "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81",
-                        "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81"]
-                        c={max:3500,dls:true,ar:1,dc:0}
+
+                        c={max:3500,dls:true,ar:1,dc:0,offset:200}
                         break
                     case "acc_death_per_million1":
                     case "acc_death_per_million2":
-                        if (props.name==="acc_death_per_million1"){
-                            dc=65
-                        }
-                        cl = ["#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE",
-                            "#13A2DE", "#75D1D8", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE",
-                            "#13A2DE", "#13A2DE", "#FF9B91", "#13A2DE", "#13A2DE", "#13A2DE",
-                            "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE",
-                            "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE", "#13A2DE"]
-                        ds=[87, 87, 79, 79, 65, 64, 64, 60, 59, 59, 59, 50, 51, 51, 50, 48, 46, 45, 45, 43, 43, 38, 39, 29, 26, 16, 16, 6, 2, 1, 0]
-                        c={max:120,dls:false,ar:0.5,dc:dc}
+                        let dc=g2.find(elem=> elem["GEO"]==="EU-27")
+
+                        c={max:120,dls:false,ar:0.5,dc:dc[props.year],offset:50}
                         break;
                 }
-                // let ds=[2975, 2975, 2763, 2763, 1185, 1162,
-                //         1162, 1115, 1106, 1106, 1106, 964,
-                //         980, 980, 964, 845, 845, 805,
-                //         805, 686, 686, 673, 582, 108, 102,
-                //         52, 52, 22, 16, 6, 0]
-                // let cl=["#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81",
-                //         "#012D81", "#FF9B91", "#012D81", "#012D81", "#012D81", "#012D81",
-                //         "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81",
-                //         "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81",
-                //         "#012D81", "#012D81", "#012D81", "#012D81", "#012D81", "#012D81"]
-                create_horizontal_bar_chart(ds,cl,c,dl);
+                create_horizontal_bar_chart(c);
+                prevprop.current=props.year
             }
             if (props.type==="line"){
                 create_line_chart();
+                prevprop.current={y1:props.y1,y2:props.y2}
             }
             if (props.type==="line_bar"){
                 create_bar_line_chart();
+                prevprop.current={y1:props.y1,y2:props.y2}
             }
              setready(true)
         }
 
 
-        else{}
+        else {
+            //console.log(isUpdated()+"by"+props.name)
+            if (isUpdated() === true) {
+                if (props.name === "databycountrydeaths" || props.name === "acc_death_per_million1" || props.name === "acc_death_per_million2") {
+
+                    let offset = 50
+                    if (props.name === props.name === "databycountrydeaths") {
+                        offset = 200
+                    }
+                    if (props.name === "acc_death_per_million1" || props.name === "acc_death_per_million2") {
+                        let dc = g2.find(elem => elem["GEO"] === "EU-27")
+                        chart.options.plugins.annotation.annotations.line1.xMax = dc[props.year]
+                        chart.options.plugins.annotation.annotations.line1.xMin = dc[props.year]
+                    }
+
+                    let result = findChartData();
+                    chart.data.datasets = [
+                        {
+                            data: result["data"],
+                            backgroundColor: result["colors"]
+                        }
+                    ]
+                    chart.data.labels = result["categories"]
+                    chart.options.scales.x.max = parseInt(result["data"][0]) + offset
+                    //  console.log(chart)
+                    chart.update()
+                    prevprop.current=props.year
+
+                }
+                if (props.name === "accident_death_injury") {
+                    let results = calc_bar_line_results()
+                    for (let i = 0; i < chart.data.datasets.length; i++) {
+                        chart.data.datasets[i].data = results[chart.data.datasets[i].label]
+                    }
+                    chart.data.labels = results["Έτη"]
+                    chart.update()
+                    prevprop.current={y1:props.y1,y2:props.y2}
+
+                }
+                if (props.name === "databyage") {
+                    let p = g6.find((elem => elem["Έτος"] === props.year))
+                    let percentages = getStackedData(p)
+                    chart.data.datasets[0].data = percentages
+                    chart.update()
+                     prevprop.current=props.year
+                }
+                if (props.name === "databysex") {
+                    let p = g7.find((elem => elem["Έτος"] === props.year))
+                    let values = getStackedData(p)
+                    for (let i = 0; i < chart.data.datasets.length; i++) {
+                        chart.data.datasets[i].data = [Math.round(values[0]), Math.round(values[1])]
+                        chart.data.datasets[i + 1].data = [Math.round(values[1]), Math.round(values[0])]
+                        break
+                    }
+                    chart.update()
+                    prevprop.current=props.year
+
+                }
+                if (props.name === "percentage_death_reduction") {
+                    let results = calc_bar_line_results()
+                    chart.data.labels = results["Έτη"]
+                    chart.data.datasets = results["datasets"]
+                    chart.update()
+                    prevprop.current={y1:props.y1,y2:props.y2}
+
+                }
+        }
+        }
 
 
      })

@@ -5,9 +5,11 @@ import "./map_styles.css"
 import greek_regions from "./GR_NUTS3.json"
 import Greek_Region_Layer from "./Greek_Region_Layer";
 import GreekArea from "./GreekArea";
-
 import L from "leaflet";
-import {SimpleMapScreenshoter} from "leaflet-simple-map-screenshoter";
+
+
+
+
 const LocationFinderDummy = () => {
     const [cpos, setcpos] = useState(null)
     const map = useMapEvents({
@@ -29,7 +31,24 @@ const LocationFinderDummy = () => {
 
 };
 
+const LocationFinder=()=>{
 
+
+
+
+    const map = useMapEvents({
+      dragend: (e) => {
+        console.log("mapCenter", e.target.getCenter());
+        console.log("zoom"+map.getZoom())
+       // console.log("map bounds", e.target.getBounds());
+      }
+    });
+    return null;
+
+
+
+
+}
 
 
 
@@ -38,13 +57,14 @@ const LocationFinderDummy = () => {
           const [area,setarea]=useState(null)
           const position =  [38.58, 23.5]
            useEffect(() => {
-
+            //    console.log("new")
+              // console.log(props.map_download)
                 //console.log(area)
 
 
            })
 
-
+        //mapCenter Object { lat: 35.97543821342023, lng: 30.778081108439043 }
         return (
             <div id={props.name}>
             <MapContainer style={{height: '50vh',minWidth:"100%",backgroundColor:"white",marginLeft: "5%"}} center={position} zoom={5.7}
@@ -55,6 +75,7 @@ const LocationFinderDummy = () => {
             >
                 <GreekArea/>
                  <Greek_Region_Layer zipUrl={greek_regions} setArea={setarea}  />
+
 
             </MapContainer>
             </div>
