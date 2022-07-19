@@ -1,0 +1,21 @@
+{
+  "name": "road_safety_observatory",
+  "version": "1.0.0",
+  "description": "enirisst platform for road safety",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "chartjs-plugin-annotation": "^1.4.0",
+    "create-react-app": "^5.0.0",
+    "leaflet": "^1.8.0",
+    "leaflet-easyprint": "^2.1.9",
+    "leaflet-image": "^0.4.0",
+    "react-leaflet": "^4.0.0",
+    "react-leaflet-easyprint": "^2.0.0"
+  }
+}
