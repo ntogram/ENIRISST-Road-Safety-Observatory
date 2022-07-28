@@ -1,0 +1,44 @@
+.ctitle{
+
+   font: normal normal bold 16px Open Sans;
+    text-align: left;
+     color: #45474D;
+    opacity: 1;
+    padding-left: 21%;
+}
+
+.csubtitle{
+
+   font: normal normal bold 12px Open Sans;
+    text-align: left;
+     color: #8D939C;
+    opacity: 1;
+    padding-left: 21%;
+}
+.csubtitle-footnote{
+
+   font: normal normal bold 12px Open Sans;
+    text-align: left;
+    opacity: 1;
+}
+
+
+
+
+hr{
+    width:64%;
+    border-top: 1px solid #8D939C;
+    margin-left: 21%;
+}
+
+hr.group1{
+    width:30%;
+  /*  margin-left: 3%;*/
+    display: inline-block;
+}
+
+hr.group2{
+    width:30%;
+  /*  margin-left: 3%;*/
+    display: inline-block;
+}

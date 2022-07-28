@@ -1,0 +1,22 @@
+.data-table-view{
+
+    opacity: 1;
+    height:44%;
+    width:29%;
+    background-color: #FFFFFF;
+    margin-top: 2%;
+
+
+}
+
+#format-table{
+    margin:3% 11% 6.5% 0%
+}
+
+#data-sep{
+    margin-left: 5%;
+    margin-right: 15%;
+    width: 90%;
+    /*color:#eee;*/
+    opacity: 0.2;
+}

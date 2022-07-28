@@ -1,0 +1,57 @@
+.footer{
+
+    background-color: #012d81;
+
+
+
+}
+
+.footer-icon{
+    margin-left:5%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+ }
+
+.text-color{
+     color: #FFFFFFDE;
+}
+
+.info{
+    margin-top: 7%;
+    margin-right:20%
+}
+
+.info-header{
+    font: normal normal bold 18px Open Sans;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 50px 0;
+}
+
+.info-text{
+    font: normal normal normal 14px Open Sans;
+}
+
+tr.info-tr>td {
+  padding-bottom: 5%;
+  white-space: nowrap;
+
+}
+
+.end{
+    clear:both;
+    margin-top:95%;
+    margin-botom:3%;
+
+}
+
+.copyright{
+    margin-left:5%;
+    font: normal normal normal 10px Open Sans;
+}
+
+a:link {
+  text-decoration: none;
+}

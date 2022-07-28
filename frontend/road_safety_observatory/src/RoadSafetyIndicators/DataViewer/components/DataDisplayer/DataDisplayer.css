@@ -1,0 +1,46 @@
+nav.dataoptions{
+    border-radius: 2px 2px 0px 0px;
+    opacity: 1;
+    background-color: #EBF7FF;
+}
+
+.datalinks{
+   font: normal normal normal 16px Open Sans;
+   float: left;
+   letter-spacing: 0px;
+   color: #45474D;
+   opacity: 1;
+   text-align: left;
+   padding: 12px;
+   text-decoration: none;
+   line-height: 25px;
+   border-radius: 4px;
+}
+
+nav .datalinks:hover {
+   background-color: darkgreen;
+    color:#FFFFFF;
+    font: normal normal normal 16px Open Sans;
+    cursor: pointer;
+}
+nav .dataselected {
+   font: normal normal normal 16px Open Sans;
+    color:#FFFFFF;
+    background-color: #75D1D8;
+    line-height: 25px;
+}
+.rightSection {
+   float: right;
+    margin-top: 1%;
+
+}
+@media screen and (max-width: 870px) {
+   nav .links {
+      float: none;
+      display: block;
+      text-align: left;
+   }
+   .rightSection {
+      float: none;
+   }
+}
