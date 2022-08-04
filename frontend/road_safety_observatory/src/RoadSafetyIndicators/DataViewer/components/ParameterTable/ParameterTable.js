@@ -13,8 +13,8 @@ export default function  ParameterTable(props) {
 
 
     useEffect(() => {
-        console.log("parameters:")
-        console.log(props.formdata)
+       // console.log("parameters:")
+       // console.log(props.formdata)
     })
 
     const isSelectedAll = () => {
@@ -23,7 +23,6 @@ export default function  ParameterTable(props) {
         if (Object.keys(props.formdata).length !== 0 ) {
 
             let group = props.formdata["areas"][0]["group"]
-            console.log(group)
             switch (group) {
                 case "Περιφερειακές Ενότητες (NUTS3)":
                     counter = 52
@@ -34,7 +33,7 @@ export default function  ParameterTable(props) {
                     s = "Όλοι οι " + group
                     break
                 case "Δήμοι":
-                    counter = 326
+                    counter = 325
                     s = "Όλοι οι " + group
                     break
             }

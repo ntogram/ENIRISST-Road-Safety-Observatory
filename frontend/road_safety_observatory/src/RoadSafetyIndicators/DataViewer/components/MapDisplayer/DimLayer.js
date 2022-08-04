@@ -21,7 +21,8 @@ function DimLayer(zipUrl) {
     const getAreas=()=>{
      let areas=[]
      for (let j=0;j<zipUrl["data"].length;j++){
-         areas.push(form_mun_name(zipUrl["data"][j]["area"]))
+         areas.push(zipUrl["data"][j]["area"])
+         //areas.push(form_mun_name(zipUrl["data"][j]["area"]))
      }
      return areas;
     }
@@ -47,8 +48,8 @@ function DimLayer(zipUrl) {
           let item=features[i]
           let name=item["properties"]["Name"]
           let r=zipUrl["data"].find((elem)=> {
-
-             return form_mun_name(elem["area"])===name
+            return elem["area"]===name
+            // return form_mun_name(elem["area"])===name
 
          })
          let popupContent="<div class='popup-text'>"+"<span class='popup-head'>"+r["area"]+"</span>"+"<br/>Έτος:"+r["year"]+"<br/>"+r["ind_name"] +":"+r["indicator"]+"</div>"
@@ -164,7 +165,7 @@ function resetHighlight(e) {
         let kt=Object.keys(_layers)
         for (let i = 0; i < kt.length; i++) {
          if ("_popupHandlersAdded" in _layers[kt[i]]) {
-             console.log("done")
+
              _layers[kt[i]].remove()
          }
      }

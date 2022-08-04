@@ -25,7 +25,8 @@ function NutLayer(zipUrl) {
       let region_obj=zipUrl["zipUrl"]
       let features=region_obj["features"].filter(
           (elem)=>{
-              let name=names[elem["properties"]["NUTS_NAME"]]
+                let name=elem["properties"]["NUTS_NAME"]
+           //   let name=names[elem["properties"]["NUTS_NAME"]]
                     if (areas.includes(name)){
                         return elem
                     }
@@ -38,9 +39,10 @@ function NutLayer(zipUrl) {
           let item=features[i]
           let name=item["properties"]["NUTS_NAME"]
           let r=zipUrl["data"].find((elem)=> {
-             return elem["area"]===names[name]
+              return elem["area"]===name
+             //return elem["area"]===names[name]
          })
-         let a=5
+
 
       //   let popupContent="<div> {r["area"]}<br/> Έτος:{r["year"]}<br/> {r["ind_name"]}:{r["indicator"]} </div>"
          let popupContent="<div class='popup-text'>"+"<span class='popup-head'>"+r["area"]+"</span>"+"<br/>Έτος:"+r["year"]+"<br/>"+r["ind_name"] +":"+r["indicator"]+"</div>"
